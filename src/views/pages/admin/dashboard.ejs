@@ -1,6 +1,6 @@
 <%- include('../../layouts/admin-header', {active: 'dashboard'}) %>
 
-<!-- Page heading -->
+<!-- 
 <div class="d-flex justify-content-between align-items-center mb-4" data-aos="fade-up">
     <div>
         <h1 class="h2 mb-0">Admin Dashboard</h1>
@@ -12,8 +12,6 @@
         </a>
     </div>
 </div>
-
-<!-- Stats Cards -->
 <div class="row mb-5">
     <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
         <div class="stats-card">
@@ -71,7 +69,6 @@
     </div>
 </div>
             
-            <!-- Recent Orders -->
 <div class="row mb-4">
     <div class="col-12" data-aos="fade-up" data-aos-delay="400">
         <div class="card shadow-sm">
@@ -144,7 +141,6 @@
     </div>
 </div>
 
-<!-- Activity Charts Row -->
 <div class="row mb-4">
     <div class="col-md-6" data-aos="fade-up" data-aos-delay="500">
         <div class="card shadow-sm h-100">
@@ -175,5 +171,42 @@
 </div>            </main>
         </div>
     </div>
+    Page heading --><div class="container coming-soon-container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+      <h1 class="mb-4">Admin Dashboard</h1>
+      
+      <div class="coming-soon-card">
+        <div class="coming-soon-icon">
+          <div class="gear-container">
+            <div class="gear gear-large"></div>
+            <div class="gear gear-medium"></div>
+            <div class="gear gear-small"></div>
+          </div>
+        </div>
+        
+        <h2 class="my-4">Coming Soon</h2>
+        <p class="lead mb-4 description-highlight">This admin dashboard provides a central overview of key business metrics, including user and order counts, recent order activity, and visual charts for tracking growth and performance.</p>
+        <p class="lead mb-4">We're working hard to bring you a better experience. The orders management system will be available shortly.</p>
+        
+        <div class="progress mb-4">
+          <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" style="width: 75%"></div>
+        </div>
+        
+        <p>In the meantime, please contact us for any order inquiries.</p>
+        <a href="/" class="btn btn-primary mt-3">Return to Home</a>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+    .description-highlight {
+  padding: 1rem;
+  background-color: #eef7ff; /* A very light blue, adjust to complement your brand */
+  border-left: 4px solid var(--veerathamizh-blue); /* Uses your brand's primary blue color */
+  border-radius: 0.25rem; /* Standard Bootstrap border radius */
+  /* The 'lead' and 'mb-4' classes will still apply their styles */
+}
+</style>
 
 <%- include('../../layouts/admin-footer') %>

@@ -1,5 +1,5 @@
 <%- include('../../layouts/header') %>
-
+<!-- 
 <div class="container">
     <div class="order-steps mb-5" data-aos="fade-up">
         <div class="step">
@@ -25,7 +25,6 @@
     
     <div class="row">
         <div class="col-lg-8">
-            <!-- Cart Items -->
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0" style="color: white !important;"><i class="fas fa-shopping-basket me-2" style="color: white !important;"></i>Cart Items</h5>
@@ -85,7 +84,6 @@
         </div>
         
         <div class="col-lg-4">
-            <!-- Order Summary -->
             <div class="card sticky-top" style="top: 90px; z-index: 100;">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0" style="color: white !important;"><i class="fas fa-receipt me-2" style="color: white !important;"></i>Order Summary</h5>
@@ -335,6 +333,44 @@
         calculateItemPrices();
         setupQuantityControls();
     });
-</script>
+</script> -->
+
+<div class="container coming-soon-container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+      <h1 class="mb-4">Carts Dashboard</h1>
+      
+      <div class="coming-soon-card">
+        <div class="coming-soon-icon">
+          <div class="gear-container">
+            <div class="gear gear-large"></div>
+            <div class="gear gear-medium"></div>
+            <div class="gear gear-small"></div>
+          </div>
+        </div>
+        
+        <h2 class="my-4">Coming Soon</h2>
+        <p class="lead mb-4 description-highlight">This cart page allows users to review their selected banner orders, adjust quantities, remove items, and view the total cost before proceeding to checkout.</p>
+        <p class="lead mb-4">We're working hard to bring you a better experience. The orders management system will be available shortly.</p>
+        
+        <div class="progress mb-4">
+          <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" style="width: 75%"></div>
+        </div>
+        
+        <p>In the meantime, please contact us for any order inquiries.</p>
+        <a href="/" class="btn btn-primary mt-3">Return to Home</a>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+    .description-highlight {
+  padding: 1rem;
+  background-color: #eef7ff; /* A very light blue, adjust to complement your brand */
+  border-left: 4px solid var(--veerathamizh-blue); /* Uses your brand's primary blue color */
+  border-radius: 0.25rem; /* Standard Bootstrap border radius */
+  /* The 'lead' and 'mb-4' classes will still apply their styles */
+}
+</style>
 
 <%- include('../../layouts/footer') %>
