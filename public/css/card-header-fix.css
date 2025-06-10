@@ -1,0 +1,43 @@
+/* Card Header Text Color Fixes */
+
+/* Fix text color in primary background elements */
+.bg-primary .mb-0,
+.bg-primary.text-white .mb-0,
+.card-header.bg-primary .mb-0,
+.card-header.bg-primary h5.mb-0,
+.card-header.bg-primary.text-white h5,
+.card-header.bg-primary.text-white h5.mb-0,
+.card-header.bg-primary.text-white .mb-0 i,
+.card-header.bg-primary.text-white i,
+h5.mb-0 {
+    color: white !important;
+    font-weight: 600;
+}
+
+/* Make sure navbar active links are gold */
+.nav-item .nav-link.active,
+.navbar-nav .nav-link.active,
+.nav-link.active i {
+    color: var(--veerathamizh-gold) !important;
+    font-weight: 600;
+}
+
+/* Force card headers with specific content to have white text */
+.card-header.bg-primary:has(h5:contains("Cart Items")),
+.card-header.bg-primary:has(h5:contains("Order Summary")) {
+    color: white !important;
+}
+
+.card-header.bg-primary:has(h5:contains("Cart Items")) *,
+.card-header.bg-primary:has(h5:contains("Order Summary")) * {
+    color: white !important;
+}
+
+/* For older browsers that don't support :has */
+.card-header.bg-primary h5 {
+    color: white !important;
+}
+
+.card-header.bg-primary h5 i {
+    color: white !important;
+}

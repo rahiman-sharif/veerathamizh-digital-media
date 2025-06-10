@@ -1,0 +1,43 @@
+/* Address Selection Styling */
+.address-selection-card {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border-width: 1px;
+}
+
+.address-selection-card:hover {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    border-color: #0d6efd;
+}
+
+.address-selection-card.border-primary {
+    box-shadow: 0 .25rem .75rem rgba(13, 110, 253, 0.25);
+}
+
+/* Make the radio button easier to click */
+.address-selection-card .form-check {
+    padding-left: 0;
+}
+
+.address-selection-card .form-check-input {
+    float: left;
+    margin-top: 0.25rem;
+}
+
+.address-selection-card .form-check-label {
+    cursor: pointer;
+    display: block;
+    width: 100%;
+}
+
+/* Style for disabled form fields */
+#addressForm input:disabled,
+#addressForm select:disabled {
+    background-color: #f8f9fa;
+    opacity: 0.65;
+}
+
+/* Add some space for the "Use New Address" button */
+.btn-outline-secondary.mb-3 {
+    margin-top: 0.5rem;
+}

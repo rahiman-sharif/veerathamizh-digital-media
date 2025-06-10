@@ -1,0 +1,932 @@
+<%- include('../../layouts/header') %>
+
+<div class="container py-5">
+    <% if (locals.query && locals.query.updated === 'true') { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> Your profile has been updated successfully.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+    
+    <% if (locals.query && locals.query.password_updated === 'true') { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> Your password has been updated successfully.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+    
+    <!-- Profile Header -->
+    <div class="profile-header mb-4" data-aos="fade-up">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="h2 mb-2">My Profile</h1>
+                <p class="text-muted">Manage your account information and preferences</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="/user/orders" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-shopping-bag me-2"></i>My Orders
+                </a>
+                <a href="/logout" class="btn btn-outline-danger">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Profile Stats -->
+        <div class="col-lg-4 mb-4">
+            <div class="row">                <!-- User Card -->
+                <div class="col-12 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card shadow-sm h-100 hover-card profile-card">
+                        <div class="card-body text-center p-4">
+                            <div class="user-avatar bg-light-primary text-primary rounded-circle mx-auto mb-4">
+                                <%= user.first_name.charAt(0).toUpperCase() %><%= user.last_name.charAt(0).toUpperCase() %>
+                            </div>
+                            <h4 class="mb-1"><%= user.first_name %> <%= user.last_name %></h4>
+                            <p class="text-muted mb-3"><%= user.email %></p>
+                            <p class="mb-3"><small>Member since <%= new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></small></p>
+                        </div>
+                    </div>
+                </div>
+                  <!-- Stats Cards -->
+                <div class="col-sm-6 col-lg-12 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card shadow-sm hover-card">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-light-primary text-primary me-3">
+                                    <i class="fas fa-shopping-bag"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-1">Total Orders</h6>
+                                    <h4 class="mb-0"><%= orderCount %></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-sm-6 col-lg-12 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card shadow-sm hover-card">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-light-success text-success me-3">
+                                    <i class="fas fa-rupee-sign"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-1">Total Spent</h6>
+                                    <h4 class="mb-0">₹<%= totalSpent.toFixed(2) %></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                  <!-- Latest Orders Preview -->
+                <div class="col-12" data-aos="fade-up" data-aos-delay="400">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-white py-3">
+                            <h5 class="mb-0">
+                                <i class="fas fa-history text-primary me-2"></i>Recent Orders
+                            </h5>
+                        </div>
+                        
+                        <% if (orders && orders.length > 0) { %>
+                            <div class="list-group list-group-flush">
+                                <% orders.forEach(function(order) { %>
+                                    <a href="/user/orders/<%= order.id %>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p class="mb-1 fw-medium">Order #<%= order.order_id || order.id %></p>
+                                            <small class="text-muted">
+                                                <%= new Date(order.created_at).toLocaleDateString() %> • 
+                                                <%= order.items.length %> item<%= order.items.length > 1 ? 's' : '' %>
+                                            </small>
+                                        </div>
+                                        <span class="badge rounded-pill <%= order.status === 'delivered' ? 'bg-success' : order.status === 'pending' ? 'bg-warning text-dark' : 'bg-primary' %>">
+                                            <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                                        </span>
+                                    </a>
+                                <% }); %>
+                                
+                                <div class="card-body text-center border-top">
+                                    <a href="/user/orders" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye me-2"></i>View All Orders
+                                    </a>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <div class="card-body text-center py-5">
+                                <div class="empty-state">
+                                    <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                                    <h6>No Orders Yet</h6>
+                                    <p class="text-muted">You haven't placed any orders yet.</p>
+                                    <a href="/order" class="btn btn-primary mt-3">
+                                        <i class="fas fa-plus me-2"></i>Create Your First Order
+                                    </a>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Information -->
+        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-user-edit text-primary me-2"></i>Personal Information</h5>
+                </div>
+                <div class="card-body">
+                    <form action="/user/profile/update" method="POST">                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label for="first_name" class="form-label">First Name </label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" value="<%= user.first_name %>" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name" class="form-label">Last Name </label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" value="<%= user.last_name %>" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control bg-light" id="email" value="<%= user.email %>" disabled readonly>
+                                <div class="form-text">Email address cannot be changed</div>
+                            </div>                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" value="<%= user.phone || '' %>" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="company_name" class="form-label">Company Name (Optional)</label>
+                            <input type="text" class="form-control" id="company_name" name="company_name" value="<%= user.company_name || '' %>">
+                        </div>
+                        
+                                <!-- Personal info form fields end here -->
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Personal Information
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Address Management Section -->
+            <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-map-marker-alt text-primary me-2"></i>My Addresses</h5>
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+                        <i class="fas fa-plus me-1"></i> Add New Address
+                    </button>
+                </div>
+                <div class="card-body">
+                    <% if (user.addresses && user.addresses.length > 0) { %>
+                        <div class="row">
+                            <% user.addresses.forEach(function(address) { %>
+                                <div class="col-md-6 col-lg-6 mb-3">
+                                    <div class="card h-100 <%= address.is_default ? 'border-primary' : '' %>">
+                                        <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">
+                                                <%= address.address_name %>
+                                                <% if (address.is_default) { %>
+                                                    <span class="badge bg-primary ms-1">Default</span>
+                                                <% } %>
+                                            </h6>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li>
+                                                        <button class="dropdown-item edit-address" data-address-id="<%= address.id %>" type="button">
+                                                            <i class="fas fa-edit me-2 text-primary"></i>Edit
+                                                        </button>
+                                                    </li>
+                                                    <% if (!address.is_default) { %>
+                                                        <li>
+                                                            <form action="/user/addresses/set-default/<%= address.id %>" method="POST" class="d-inline">
+                                                                <button class="dropdown-item" type="submit">
+                                                                    <i class="fas fa-check-circle me-2 text-success"></i>Set as Default
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    <% } %>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <form action="/user/addresses/delete/<%= address.id %>" method="POST" class="d-inline delete-address-form">
+                                                            <button class="dropdown-item text-danger" type="submit">
+                                                                <i class="fas fa-trash me-2"></i>Delete
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="mb-1"><strong><%= address.first_name %> <%= address.last_name %></strong></p>
+                                            <p class="mb-1"><%= address.address_line1 %></p>
+                                            <% if (address.address_line2) { %>
+                                                <p class="mb-1"><%= address.address_line2 %></p>
+                                            <% } %>
+                                            <p class="mb-1"><%= address.city %>, <%= address.state %> <%= address.zipcode %></p>
+                                            <p class="mb-0">Phone: <%= address.phone %></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } else { %>
+                        <div class="text-center py-5">
+                            <div class="empty-state">
+                                <i class="fas fa-map-marker-alt fa-3x text-muted mb-3"></i>
+                                <h6>No Addresses Yet</h6>
+                                <p class="text-muted mb-4">You haven't added any delivery addresses yet.</p>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+                                    <i class="fas fa-plus me-2"></i>Add Your First Address
+                                </button>
+                            </div>
+                        </div>
+                    <% } %>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-lock text-primary me-2"></i>Account Security</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">Manage your password and account security settings</p>
+                      <div class="d-grid gap-2 d-md-flex">
+                        <a href="/user/change-password" class="btn btn-outline-primary">
+                            <i class="fas fa-key me-2"></i>Change Password
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .user-avatar {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 28px;
+    }
+    
+    .stats-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 1.25rem;
+    }
+    
+    .bg-light-primary {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+    
+    .bg-light-success {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
+    
+    .profile-header {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding-bottom: 1.5rem;        margin-bottom: 2rem;
+    }
+    
+    .address-card:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    }
+    
+    /* Enhanced form validation styling */
+    .form-control.is-invalid, .form-select.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .form-control.is-valid, .form-select.is-valid {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+    }
+    
+    .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #dc3545;
+        font-weight: 500;
+    }
+    
+    .valid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #198754;
+        font-weight: 500;
+    }
+    
+    /* Improved focus states for required fields */
+    .form-control[required]:focus, .form-select[required]:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    
+    /* Required field indicator */
+    .form-label::after {
+        content: " *";
+        color: #dc3545;
+        font-weight: bold;
+    }      /* Only show asterisk for required fields */
+    .form-label[for="add_address_line2"]::after,
+    .form-label[for="edit_address_line2"]::after,
+    .form-label[for="company_name"]::after {
+        content: "";
+    }
+    
+    /* Modal animations */
+    .modal.fade .modal-dialog {
+        transform: translate(0, -50px);
+        transition: transform 0.3s ease-out;
+    }
+    
+    .modal.show .modal-dialog {
+        transform: translate(0, 0);
+    }
+    
+    /* Address form styling improvements */
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+    
+    /* Alert styling */
+    .alert {
+        border-radius: 0.5rem;
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    
+    .alert-danger {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c2c7 100%);
+        color: #721c24;
+    }
+    
+    .alert-success {
+        background: linear-gradient(135deg, #d1e7dd 0%, #badbcc 100%);
+        color: #0f5132;
+    }
+</style>
+
+<!-- Add Address Modal -->
+<div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAddressModalLabel">Add New Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/user/addresses/add" method="POST" id="addAddressForm">
+                <div class="modal-body">                    <div class="mb-3">
+                        <label for="address_name" class="form-label">Address Label/Nickname <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="address_name" name="address_name" placeholder="Home, Work, etc." required>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="add_first_name" class="form-label">First Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="add_first_name" name="first_name" value="<%= user.first_name %>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="add_last_name" class="form-label">Last Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="add_last_name" name="last_name" value="<%= user.last_name %>" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="add_address_line1" class="form-label">Address Line 1 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="add_address_line1" name="address_line1" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="add_address_line2" class="form-label">Address Line 2 (Optional)</label>
+                        <input type="text" class="form-control" id="add_address_line2" name="address_line2">
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="add_city" class="form-label">City <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="add_city" name="city" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="add_state" class="form-label">State <span class="text-danger">*</span></label>
+                            <select class="form-select" id="add_state" name="state" required>
+                                <option value="">Select State</option>
+                                <option value="TN">Tamil Nadu</option>
+                                <option value="AP">Andhra Pradesh</option>
+                                <option value="KA">Karnataka</option>
+                                <option value="KL">Kerala</option>
+                                <option value="TS">Telangana</option>
+                                <option value="MH">Maharashtra</option>
+                                <option value="DL">Delhi</option>
+                                <option value="UP">Uttar Pradesh</option>
+                                <option value="GJ">Gujarat</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="add_zipcode" class="form-label">PIN Code <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="add_zipcode" name="zipcode" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="add_phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="add_phone" name="phone" value="<%= user.phone || '' %>" required>
+                        </div>
+                    </div>
+                    
+                    <% if (!user.addresses || user.addresses.length === 0) { %>
+                        <div class="form-text mb-3">This will be set as your default address since it's your first address.</div>
+                    <% } else { %>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="set_as_default" name="is_default">
+                            <label class="form-check-label" for="set_as_default">Set as default address</label>
+                        </div>
+                    <% } %>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Address</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Address Modal -->
+<div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAddressModalLabel">Edit Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editAddressForm" method="POST">
+                <div class="modal-body">                    <div class="mb-3">
+                        <label for="edit_address_name" class="form-label">Address Label/Nickname <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit_address_name" name="address_name" required>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="edit_first_name" class="form-label">First Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_first_name" name="first_name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_last_name" class="form-label">Last Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_last_name" name="last_name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="edit_address_line1" class="form-label">Address Line 1 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit_address_line1" name="address_line1" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="edit_address_line2" class="form-label">Address Line 2 (Optional)</label>
+                        <input type="text" class="form-control" id="edit_address_line2" name="address_line2">
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="edit_city" class="form-label">City <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_city" name="city" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_state" class="form-label">State <span class="text-danger">*</span></label>
+                            <select class="form-select" id="edit_state" name="state" required>
+                                <option value="">Select State</option>
+                                <option value="TN">Tamil Nadu</option>
+                                <option value="AP">Andhra Pradesh</option>
+                                <option value="KA">Karnataka</option>
+                                <option value="KL">Kerala</option>
+                                <option value="TS">Telangana</option>
+                                <option value="MH">Maharashtra</option>
+                                <option value="DL">Delhi</option>
+                                <option value="UP">Uttar Pradesh</option>
+                                <option value="GJ">Gujarat</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="edit_zipcode" class="form-label">PIN Code <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_zipcode" name="zipcode" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="edit_phone" name="phone" required>
+                        </div>
+                    </div>
+                    
+                    <div id="edit_default_switch_container">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="edit_set_as_default" name="is_default">
+                            <label class="form-check-label" for="edit_set_as_default">Set as default address</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Address</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add JavaScript for address management -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation function
+        function validateForm(form) {
+            let isValid = true;
+            const requiredFields = form.querySelectorAll('[required]');
+            
+            requiredFields.forEach(field => {
+                // Remove previous validation classes
+                field.classList.remove('is-valid', 'is-invalid');
+                
+                // Check if field is empty
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                    
+                    // Add error message if it doesn't exist
+                    let errorDiv = field.parentNode.querySelector('.invalid-feedback');
+                    if (!errorDiv) {
+                        errorDiv = document.createElement('div');
+                        errorDiv.className = 'invalid-feedback';
+                        errorDiv.textContent = 'This field is required.';
+                        field.parentNode.appendChild(errorDiv);
+                    }
+                } else {
+                    field.classList.add('is-valid');
+                    
+                    // Remove error message if field is valid
+                    const errorDiv = field.parentNode.querySelector('.invalid-feedback');
+                    if (errorDiv) {
+                        errorDiv.remove();
+                    }
+                }
+            });
+            
+            return isValid;        }
+        
+        // Setup validation for Personal Information form
+        const personalInfoForm = document.querySelector('form[action="/user/profile/update"]');
+        if (personalInfoForm) {
+            const requiredFields = personalInfoForm.querySelectorAll('[required]');
+            
+            // Real-time validation for personal info fields
+            requiredFields.forEach(field => {
+                // Validate on blur
+                field.addEventListener('blur', function() {
+                    this.classList.remove('is-valid', 'is-invalid');
+                    
+                    if (!this.value.trim()) {
+                        this.classList.add('is-invalid');
+                        
+                        // Add error message if it doesn't exist
+                        let errorDiv = this.parentNode.querySelector('.invalid-feedback');
+                        if (!errorDiv) {
+                            errorDiv = document.createElement('div');
+                            errorDiv.className = 'invalid-feedback';
+                            errorDiv.textContent = 'This field is required.';
+                            this.parentNode.appendChild(errorDiv);
+                        }
+                    } else {
+                        this.classList.add('is-valid');
+                        
+                        // Remove error message if field is valid
+                        const errorDiv = this.parentNode.querySelector('.invalid-feedback');
+                        if (errorDiv) {
+                            errorDiv.remove();
+                        }
+                    }
+                });
+                
+                // Validate on input for immediate feedback
+                field.addEventListener('input', function() {
+                    if (this.classList.contains('is-invalid') && this.value.trim()) {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                        
+                        // Remove error message
+                        const errorDiv = this.parentNode.querySelector('.invalid-feedback');
+                        if (errorDiv) {
+                            errorDiv.remove();
+                        }
+                    }
+                });
+            });
+            
+            // Validate on form submission
+            personalInfoForm.addEventListener('submit', function(e) {
+                if (!validateForm(this)) {
+                    e.preventDefault();
+                    
+                    // Focus on first invalid field
+                    const firstInvalid = this.querySelector('.is-invalid');
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                    }
+                    
+                    // Show error message
+                    const errorAlert = document.createElement('div');
+                    errorAlert.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                    errorAlert.innerHTML = `
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Please fill in all required fields.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    
+                    // Remove existing error alert
+                    const existingAlert = this.querySelector('.alert-danger');
+                    if (existingAlert) {
+                        existingAlert.remove();
+                    }
+                    
+                    // Add error alert before submit button
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    submitButton.parentNode.parentNode.insertBefore(errorAlert, submitButton.parentNode);
+                    
+                    // Auto-hide alert after 5 seconds
+                    setTimeout(() => {
+                        if (errorAlert.parentNode) {
+                            errorAlert.remove();
+                        }
+                    }, 5000);
+                }
+            });
+        }
+        
+        // Real-time validation for address forms
+        function setupRealTimeValidation(formId) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+            
+            const requiredFields = form.querySelectorAll('[required]');
+            
+            requiredFields.forEach(field => {
+                // Validate on blur
+                field.addEventListener('blur', function() {
+                    this.classList.remove('is-valid', 'is-invalid');
+                    
+                    if (!this.value.trim()) {
+                        this.classList.add('is-invalid');
+                        
+                        // Add error message if it doesn't exist
+                        let errorDiv = this.parentNode.querySelector('.invalid-feedback');
+                        if (!errorDiv) {
+                            errorDiv = document.createElement('div');
+                            errorDiv.className = 'invalid-feedback';
+                            errorDiv.textContent = 'This field is required.';
+                            this.parentNode.appendChild(errorDiv);
+                        }
+                    } else {
+                        this.classList.add('is-valid');
+                        
+                        // Remove error message if field is valid
+                        const errorDiv = this.parentNode.querySelector('.invalid-feedback');
+                        if (errorDiv) {
+                            errorDiv.remove();
+                        }
+                    }
+                });
+                
+                // Validate on input for immediate feedback
+                field.addEventListener('input', function() {
+                    if (this.classList.contains('is-invalid') && this.value.trim()) {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                        
+                        // Remove error message
+                        const errorDiv = this.parentNode.querySelector('.invalid-feedback');
+                        if (errorDiv) {
+                            errorDiv.remove();
+                        }
+                    }
+                });
+            });
+        }
+        
+        // Setup validation for add address form
+        setupRealTimeValidation('addAddressForm');
+        setupRealTimeValidation('editAddressForm');
+        
+        // Handle add address form submission
+        const addAddressForm = document.getElementById('addAddressForm');
+        if (addAddressForm) {
+            addAddressForm.addEventListener('submit', function(e) {
+                if (!validateForm(this)) {
+                    e.preventDefault();
+                    
+                    // Focus on first invalid field
+                    const firstInvalid = this.querySelector('.is-invalid');
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                    }
+                    
+                    // Show error message
+                    const errorAlert = document.createElement('div');
+                    errorAlert.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                    errorAlert.innerHTML = `
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Please fill in all required fields correctly.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    
+                    // Remove existing error alert
+                    const existingAlert = this.querySelector('.alert-danger');
+                    if (existingAlert) {
+                        existingAlert.remove();
+                    }
+                    
+                    // Add error alert to form
+                    this.querySelector('.modal-body').appendChild(errorAlert);
+                    
+                    // Auto-hide alert after 5 seconds
+                    setTimeout(() => {
+                        if (errorAlert.parentNode) {
+                            errorAlert.remove();
+                        }
+                    }, 5000);
+                }
+            });
+        }
+        
+        // Handle edit address form submission
+        const editAddressForm = document.getElementById('editAddressForm');
+        if (editAddressForm) {
+            editAddressForm.addEventListener('submit', function(e) {
+                if (!validateForm(this)) {
+                    e.preventDefault();
+                    
+                    // Focus on first invalid field
+                    const firstInvalid = this.querySelector('.is-invalid');
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                    }
+                    
+                    // Show error message
+                    const errorAlert = document.createElement('div');
+                    errorAlert.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                    errorAlert.innerHTML = `
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Please fill in all required fields correctly.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    
+                    // Remove existing error alert
+                    const existingAlert = this.querySelector('.alert-danger');
+                    if (existingAlert) {
+                        existingAlert.remove();
+                    }
+                    
+                    // Add error alert to form
+                    this.querySelector('.modal-body').appendChild(errorAlert);
+                    
+                    // Auto-hide alert after 5 seconds
+                    setTimeout(() => {
+                        if (errorAlert.parentNode) {
+                            errorAlert.remove();
+                        }
+                    }, 5000);
+                }
+            });
+        }        // Handle edit address button clicks
+        const editButtons = document.querySelectorAll('.edit-address');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const addressId = this.getAttribute('data-address-id');
+                const addresses = <%- JSON.stringify(user.addresses || []) %>;
+                const address = addresses.find(addr => addr.id == addressId);
+                
+                if (address) {
+                    // Clear any previous validation states
+                    const editForm = document.getElementById('editAddressForm');
+                    const fields = editForm.querySelectorAll('.form-control, .form-select');
+                    fields.forEach(field => {
+                        field.classList.remove('is-valid', 'is-invalid');
+                    });
+                    
+                    // Remove any existing error messages
+                    const errorDivs = editForm.querySelectorAll('.invalid-feedback');
+                    errorDivs.forEach(div => div.remove());
+                    
+                    // Remove any existing alerts
+                    const alerts = editForm.querySelectorAll('.alert');
+                    alerts.forEach(alert => alert.remove());
+                    
+                    // Populate form fields
+                    document.getElementById('edit_address_name').value = address.address_name || '';
+                    document.getElementById('edit_first_name').value = address.first_name || '';
+                    document.getElementById('edit_last_name').value = address.last_name || '';
+                    document.getElementById('edit_address_line1').value = address.address_line1 || '';
+                    document.getElementById('edit_address_line2').value = address.address_line2 || '';
+                    document.getElementById('edit_city').value = address.city || '';
+                    document.getElementById('edit_state').value = address.state || '';
+                    document.getElementById('edit_zipcode').value = address.zipcode || '';
+                    document.getElementById('edit_phone').value = address.phone || '';
+                    
+                    // Handle default checkbox
+                    const defaultCheckbox = document.getElementById('edit_set_as_default');
+                    const defaultContainer = document.getElementById('edit_default_switch_container');
+                    
+                    if (address.is_default) {
+                        defaultContainer.style.display = 'none'; // Hide the option if already default
+                    } else {
+                        defaultContainer.style.display = 'block';
+                        defaultCheckbox.checked = false;
+                    }
+                    
+                    // Set the form action
+                    document.getElementById('editAddressForm').action = `/user/addresses/update/${addressId}`;
+                    
+                    // Show the modal
+                    const editModal = new bootstrap.Modal(document.getElementById('editAddressModal'));
+                    editModal.show();
+                }
+            });
+        });
+        
+        // Clear validation when modals are hidden
+        document.getElementById('addAddressModal').addEventListener('hidden.bs.modal', function() {
+            const form = this.querySelector('form');
+            const fields = form.querySelectorAll('.form-control, .form-select');
+            fields.forEach(field => {
+                field.classList.remove('is-valid', 'is-invalid');
+            });
+            
+            // Remove error messages and alerts
+            const errorDivs = form.querySelectorAll('.invalid-feedback');
+            errorDivs.forEach(div => div.remove());
+            
+            const alerts = form.querySelectorAll('.alert');
+            alerts.forEach(alert => alert.remove());
+            
+            // Reset form
+            form.reset();
+        });
+        
+        document.getElementById('editAddressModal').addEventListener('hidden.bs.modal', function() {
+            const form = this.querySelector('form');
+            const fields = form.querySelectorAll('.form-control, .form-select');
+            fields.forEach(field => {
+                field.classList.remove('is-valid', 'is-invalid');
+            });
+            
+            // Remove error messages and alerts
+            const errorDivs = form.querySelectorAll('.invalid-feedback');
+            errorDivs.forEach(div => div.remove());
+            
+            const alerts = form.querySelectorAll('.alert');
+            alerts.forEach(alert => alert.remove());
+        });
+        
+        // Confirm delete address
+        const deleteAddressForms = document.querySelectorAll('.delete-address-form');
+        deleteAddressForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                if (!confirm('Are you sure you want to delete this address?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    });
+</script>
+
+<%- include('../../layouts/footer') %>

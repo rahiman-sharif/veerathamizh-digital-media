@@ -1,0 +1,115 @@
+<%- include('../../layouts/header') %>
+
+<div class="container">
+    <div class="row justify-content-center">        <div class="col-md-6 col-lg-5">
+            <div class="form-container my-5 fade-in">
+                <div class="text-center mb-4">
+                    <div class="auth-logo-container mb-3">
+                        <img src="/images/banner.png" alt="Veerathamizh Digital Media" class="auth-banner">
+                    </div>
+                </div>
+                <h2 class="form-title">Verify OTP</h2>
+                
+                <form action="/auth/verify-otp" method="POST">
+                    <div class="text-center mb-4">
+                        <p>Enter the 6-digit code sent to your phone</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between gap-2">
+                            <input type="text" class="form-control text-center otp-input" maxlength="1" autofocus>
+                            <input type="text" class="form-control text-center otp-input" maxlength="1">
+                            <input type="text" class="form-control text-center otp-input" maxlength="1">
+                            <input type="text" class="form-control text-center otp-input" maxlength="1">
+                            <input type="text" class="form-control text-center otp-input" maxlength="1">
+                            <input type="text" class="form-control text-center otp-input" maxlength="1">
+                        </div>
+                        <input type="hidden" name="otp" id="otp-value">
+                    </div>
+                    
+                    <div class="d-grid gap-2 mb-4">
+                        <button type="submit" class="btn btn-primary">Verify</button>
+                    </div>
+                    
+                    <div class="text-center mb-3">
+                        <p class="mb-0">Didn't receive the code?</p>
+                        <a href="#" class="text-decoration-none" id="resendOtp">Resend OTP</a>
+                        <div id="countdown" class="text-muted small mt-1" style="display: none;"></div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <a href="/auth/login" class="text-decoration-none">
+                            <i class="fas fa-arrow-left"></i> Back to Login
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // OTP input handling
+    const otpInputs = document.querySelectorAll('.otp-input');
+    const otpValue = document.getElementById('otp-value');
+    
+    otpInputs.forEach((input, index) => {
+        // Focus next input when current one is filled
+        input.addEventListener('input', function() {
+            if (this.value.length === 1) {
+                if (index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            }
+            
+            // Combine all values into hidden field
+            let otp = '';
+            otpInputs.forEach(input => {
+                otp += input.value;
+            });
+            otpValue.value = otp;
+        });
+        
+        // Handle backspace to go back to previous input
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && !this.value && index > 0) {
+                otpInputs[index - 1].focus();
+            }
+        });
+    });
+    
+    // Resend OTP countdown
+    document.getElementById('resendOtp').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Disable resend button
+        this.classList.add('text-muted');
+        this.style.pointerEvents = 'none';
+        
+        // Show countdown
+        const countdownEl = document.getElementById('countdown');
+        countdownEl.style.display = 'block';
+        
+        let timeLeft = 30;
+        countdownEl.textContent = `Resend available in ${timeLeft} seconds`;
+        
+        const countdown = setInterval(function() {
+            timeLeft--;
+            countdownEl.textContent = `Resend available in ${timeLeft} seconds`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                document.getElementById('resendOtp').classList.remove('text-muted');
+                document.getElementById('resendOtp').style.pointerEvents = 'auto';
+                countdownEl.style.display = 'none';
+            }
+        }, 1000);
+        
+        // Simulate OTP resend (for demo purposes)
+        setTimeout(() => {
+            alert('New OTP sent! (For demo purposes, use 123456)');
+        }, 1500);
+    });
+</script>
+
+<%- include('../../layouts/footer') %>

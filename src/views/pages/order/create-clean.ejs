@@ -1,0 +1,172 @@
+<%- include('../../layouts/header') %>
+
+<div class="container order-process-container">
+    <div class="order-steps mb-5">
+        <div class="step active" data-aos="fade-right" data-aos-delay="100">
+            <div class="step-icon">1</div>
+            <div class="step-text">Create Order</div>
+        </div>
+        <div class="step" data-aos="fade-right" data-aos-delay="200">
+            <div class="step-icon">2</div>
+            <div class="step-text">Review Cart</div>
+        </div>
+        <div class="step" data-aos="fade-right" data-aos-delay="300">
+            <div class="step-icon">3</div>
+            <div class="step-text">Checkout</div>
+        </div>
+        <div class="step" data-aos="fade-right" data-aos-delay="400">
+            <div class="step-icon">4</div>
+            <div class="step-text">Confirmation</div>
+        </div>
+    </div>
+    
+    <h1 class="mb-4 text-center" data-aos="fade-up">Create Your Banner Order</h1>
+    <p class="text-muted text-center mb-5" data-aos="fade-up" data-aos-delay="100">Design your perfect banner in just a few simple steps</p>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Banner Upload Section -->
+            <div class="card mb-4 shadow-sm" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-upload me-2"></i>Upload Banner Image</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div id="upload-area" class="upload-area">
+                        <div class="text-center">
+                            <div class="upload-icon pulse">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h5 class="mb-3">Drag & Drop or Click to Upload</h5>
+                            <p class="text-muted mb-4">Support JPG and PNG only. Max file size 5MB.</p>
+                            <button type="button" id="upload-button" class="btn btn-primary btn-lg px-4">
+                                <i class="fas fa-folder-open me-2"></i>Browse Files
+                            </button>
+                            <input type="file" id="file-input" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <div id="preview-area" class="mt-4 text-center" style="display: none;">
+                        <div class="position-relative mb-4">
+                            <img id="banner-preview" src="" alt="Banner Preview" class="banner-preview img-fluid mb-3 shadow-sm">
+                            <div class="position-absolute top-0 end-0 m-3">
+                                <button type="button" id="remove-image" class="btn btn-light rounded-circle">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" id="change-image" class="btn btn-outline-primary me-3">
+                            <i class="fas fa-exchange-alt me-2"></i>Change Image
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Banner Size Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-ruler-combined me-2"></i>Select Banner Size</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <% bannerSizes.forEach(function(size) { %>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="banner-size-card card h-100 p-3 text-center" data-size="<%= size.id %>">
+                                <div class="card-body p-2">
+                                    <h5 class="card-title"><%= size.name %></h5>
+                                    <p class="card-text mb-0">
+                                        <small><%= size.width %>' × <%= size.height %>'</small>
+                                    </p>
+                                    <p class="text-primary fw-bold mt-2 mb-0">₹<%= size.price %></p>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quantity Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-sort-amount-up me-2"></i>Select Quantity</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <button type="button" class="btn btn-outline-secondary" id="decrease-qty">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" id="quantity" class="form-control text-center" value="1" min="1" max="100">
+                                <button type="button" class="btn btn-outline-secondary" id="increase-qty">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Order Summary -->
+            <div class="card sticky-top" style="top: 90px; z-index: 100;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="order-summary">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Selected Size:</span>
+                            <span id="selected-size-text">Not selected</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Quantity:</span>
+                            <span id="selected-quantity-text">1</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Unit Price:</span>
+                            <span id="unit-price-text">₹0</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="fw-bold">Total Price:</span>
+                            <span class="fw-bold" id="total-price-text">₹0</span>
+                        </div>
+                        
+                        <div class="alert alert-info mb-3" id="validation-message">
+                            Please upload a banner image and select a size to continue.
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button id="add-to-cart-btn" class="btn btn-primary" disabled>
+                                <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                            </button>
+                            <a href="/order/cart" class="btn btn-outline-primary">
+                                <i class="fas fa-shopping-basket me-2"></i>View Cart
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pass banner sizes data to JavaScript -->
+<script>
+    window.bannerSizesData = [
+        <% bannerSizes.forEach(function(size, index) { %>
+        {
+            id: '<%= size.id %>',
+            name: '<%= size.name %>',
+            price: <%= size.price %>
+        }<%= index < bannerSizes.length - 1 ? ',' : '' %>
+        <% }); %>
+    ];
+</script>
+
+<!-- Order Creation JavaScript -->
+<script src="/js/order-create.js"></script>
+
+<%- include('../../layouts/footer') %>

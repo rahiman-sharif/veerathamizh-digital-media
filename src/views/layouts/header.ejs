@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Veerathamizh Digital Media Group' %></title>
+    <!-- Bootstrap 5.3.2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation Library -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">    <!-- Enhanced UI CSS -->
+    <link rel="stylesheet" href="/css/enhanced-ui.css">
+    <!-- Auth Enhanced CSS -->
+    <link rel="stylesheet" href="/css/auth-enhanced.css">
+    <!-- Brand Theme CSS -->
+    <link rel="stylesheet" href="/css/brand-theme.css">    <!-- Banner Enhancements CSS -->
+    <link rel="stylesheet" href="/css/banner-enhancements.css">
+    <!-- Card Header Fix CSS -->
+    <link rel="stylesheet" href="/css/card-header-fix.css">    <!-- Footer Fix CSS -->
+    <link rel="stylesheet" href="/css/footer-fix.css">
+    <!-- Loading Spinner CSS -->
+    <link rel="stylesheet" href="/css/loading-spinner.css">
+    
+    <!-- Essential JS - Load before other scripts -->    <script src="/js/share-modal.js"></script>
+    <script src="/js/test-upload.js"></script>
+    <script src="/js/session-fix.js"></script>
+    <script src="/js/upload-fix.js"></script>
+    <script src="/js/direct-fix.js"></script>
+    <script src="/js/nav-enhancement.js"></script>
+    <!-- DB Loading Manager -->
+    <script src="/js/db-loading-manager.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg sticky-top shadow-sm">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/" data-aos="fade-right" data-aos-duration="1000">
+            <div class="logo-container me-2">
+                <img src="/images/logo.png" alt="Veerathamizh Digital Media Group" height="50" class="d-inline-block">
+            </div>
+            <div class="brand-text">
+                <span class="brand-title">Veerathamizh</span>
+                <span class="brand-subtitle d-block">Digital Media</span>
+            </div>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link <%= (typeof active !== 'undefined' && active === 'home') ? 'active' : '' %>" href="/"><i class="fas fa-home"></i> Home</a>
+                </li>                <% if (locals.user) { %>
+                    <% if (locals.user.user_type === 'Super User' || locals.user.user_type === 'Admin') { %>
+                        <!-- Admin Navigation -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle <%= (typeof active !== 'undefined' && active === 'admin') ? 'active' : '' %>" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-shield"></i> Admin Panel
+                            </a>
+                            <ul class="dropdown-menu shadow-sm border-0">
+                                <li><a class="dropdown-item" href="/admin"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                                <li><a class="dropdown-item" href="/admin/orders"><i class="fas fa-shopping-cart"></i> Manage Orders</a></li>
+                                <li><a class="dropdown-item" href="/admin/users"><i class="fas fa-users"></i> Manage Users</a></li>
+                            </ul>
+                        </li>                    <% } %>
+                    <!-- User Navigation - Hide Orders dropdown for Admin and Super Admin -->
+                    <% if (locals.user.user_type !== 'Super User' && locals.user.user_type !== 'Admin') { %>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle <%= (typeof active !== 'undefined' && active === 'orders') ? 'active' : '' %>" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-shopping-cart"></i> Orders
+                            </a>
+                            <ul class="dropdown-menu shadow-sm border-0">
+                                <li><a class="dropdown-item d-flex align-items-center" href="/order">
+                                    <i class="fas fa-plus me-2 text-primary"></i>
+                                    <div>
+                                        <span>Create New Order</span>
+                                        <small class="d-block text-muted">Design & place a new banner order</small>
+                                    </div>
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item d-flex align-items-center" href="/order/cart">
+                                    <i class="fas fa-shopping-basket me-2 text-primary"></i>
+                                    <div>
+                                        <span>View Cart</span>
+                                        <small class="d-block text-muted">Review your selected items</small>
+                                    </div>
+                                </a></li>
+                                <li><a class="dropdown-item d-flex align-items-center" href="/user/orders">
+                                    <i class="fas fa-clipboard-list me-2 text-primary"></i>
+                                    <div>
+                                        <span>My Orders</span>
+                                        <small class="d-block text-muted">Track & manage your orders</small>
+                                    </div>
+                                </a></li>
+                            </ul>
+                        </li>
+                    <% } %>
+                <% } %>
+            </ul>
+            
+            <ul class="navbar-nav align-items-center">
+                <% if (locals.user) { %>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <div class="user-avatar bg-primary text-white rounded-circle me-2 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                <%= (locals.user.first_name || 'U').charAt(0).toUpperCase() %><%= (locals.user.last_name || '').charAt(0).toUpperCase() %>
+                            </div>                            <span><%= locals.user.first_name %></span>
+                            <% if (locals.user.user_type === 'Super User') { %>
+                                <span class="badge bg-danger ms-2"><i class="fas fa-crown me-1"></i>Super User</span>
+                            <% } else if (locals.user.user_type === 'Admin') { %>
+                                <span class="badge bg-primary ms-2"><i class="fas fa-shield-alt me-1"></i>Admin</span>
+                            <% } %>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">                            <li>
+                                <span class="dropdown-item-text">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <strong><%= locals.user.first_name %> <%= locals.user.last_name %></strong><br>
+                                            <small class="text-muted"><%= locals.user.email %></small>
+                                        </div>
+                                        <% if (locals.user.user_type === 'Super User') { %>
+                                            <span class="badge bg-danger"><i class="fas fa-crown me-1"></i>Super User</span>
+                                        <% } else if (locals.user.user_type === 'Admin') { %>
+                                            <span class="badge bg-primary"><i class="fas fa-shield-alt me-1"></i>Admin</span>
+                                        <% } else { %>
+                                            <span class="badge bg-info"><i class="fas fa-user me-1"></i>User</span>
+                                        <% } %>
+                                    </div>
+                                </span>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/user/profile"><i class="fas fa-id-card me-2 text-primary"></i> My Profile</a></li>
+                            <li><a class="dropdown-item" href="/user/orders"><i class="fas fa-clipboard-list me-2 text-primary"></i> My Orders</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="/auth/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                <% } else { %>
+                    <li class="nav-item me-2">
+                        <a class="btn btn-login auth-btn" href="/auth/login"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-signup auth-btn" href="/auth/register"><i class="fas fa-user-plus me-1"></i> Sign Up</a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Enhanced Alerts Container -->
+<div id="enhanced-alerts-container"></div>
+
+<div class="container main-container">
+    <!-- Hidden Bootstrap alerts for enhanced system conversion -->
+    <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show d-none" role="alert" data-enhanced-alert="success" data-message="<%= success %>">
+            <%= success %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+    
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show d-none" role="alert" data-enhanced-alert="error" data-message="<%= error %>">
+            <%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>

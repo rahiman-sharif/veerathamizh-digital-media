@@ -1,0 +1,175 @@
+/**
+ * Brand Loading Spinner Component - Veerathamizh Digital Media
+ * Elegant brand-styled loading indicator with minimal design
+ * Author: Rahiman Sharif 
+ * Created: 2025-06-06
+ */
+
+/* Brand color variables */
+:root {
+    --veerathamizh-blue: #0a1a42;
+    --veerathamizh-gold: #d4af37;
+    --veerathamizh-blue-light: #1e3a8a;
+    --veerathamizh-gradient: linear-gradient(135deg, var(--veerathamizh-blue) 0%, var(--veerathamizh-blue-light) 100%);
+    --veerathamizh-gold-gradient: linear-gradient(45deg, var(--veerathamizh-gold) 0%, #f4d03f 100%);
+}
+
+/* Overlay that covers the entire viewport */
+.db-loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        rgba(10, 26, 66, 0.4) 0%, 
+        rgba(30, 58, 138, 0.3) 100%);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease-in-out;
+}
+
+.db-loading-overlay.active {
+    display: flex;
+}
+
+/* Loading spinner container - simplified and elegant */
+.db-loading-container {
+    background: linear-gradient(145deg, white 0%, #fefefe 100%);
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 
+        0 20px 40px rgba(10, 26, 66, 0.2),
+        0 4px 8px rgba(10, 26, 66, 0.1);
+    text-align: center;
+    min-width: 180px;
+    max-width: 200px;
+    animation: fadeInScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    position: relative;
+}
+
+/* Elegant top accent border */
+.db-loading-container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background: var(--veerathamizh-gold-gradient);
+    top: 0;
+    left: 0;
+    border-radius: 20px 20px 0 0;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Brand-styled spinner */
+.db-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(10, 26, 66, 0.1);
+    border-top: 4px solid var(--veerathamizh-blue);
+    border-right: 4px solid var(--veerathamizh-gold);
+    border-radius: 50%;
+    animation: brandSpin 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    margin: 0 auto 1.5rem auto;
+    position: relative;
+}
+
+/* Enhanced brand spinner animation */
+@keyframes brandSpin {
+    0% { 
+        transform: rotate(0deg);
+        border-top-color: var(--veerathamizh-blue);
+        border-right-color: var(--veerathamizh-gold);
+    }
+    25% { 
+        transform: rotate(90deg);
+        border-top-color: var(--veerathamizh-gold);
+        border-right-color: var(--veerathamizh-blue);
+    }
+    50% { 
+        transform: rotate(180deg);
+        border-top-color: var(--veerathamizh-blue);
+        border-right-color: var(--veerathamizh-gold);
+    }
+    75% { 
+        transform: rotate(270deg);
+        border-top-color: var(--veerathamizh-gold);
+        border-right-color: var(--veerathamizh-blue);
+    }
+    100% { 
+        transform: rotate(360deg);
+        border-top-color: var(--veerathamizh-blue);
+        border-right-color: var(--veerathamizh-gold);
+    }
+}
+
+/* Spinner glow effect */
+.db-spinner::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    background: conic-gradient(
+        var(--veerathamizh-gold) 0deg,
+        transparent 90deg,
+        var(--veerathamizh-blue) 180deg,
+        transparent 270deg
+    );
+    opacity: 0.3;
+    animation: brandSpinGlow 1.5s linear infinite;
+    z-index: -1;
+}
+
+@keyframes brandSpinGlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Elegant loading text */
+.db-loading-text {
+    color: var(--veerathamizh-blue);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.db-loading-subtext {
+    color: var(--veerathamizh-gold);
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-style: normal;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .db-loading-container {
+        margin: 1rem;
+        min-width: 160px;
+        max-width: 180px;
+        padding: 2rem;
+    }
+    
+    .db-spinner {
+        width: 50px;
+        height: 50px;
+    }
+}

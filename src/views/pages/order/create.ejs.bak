@@ -1,0 +1,424 @@
+<%- include('../../layouts/header') %>
+
+<div class="container order-process-container">
+    <div class="order-steps mb-5">
+        <div class="step active" data-aos="fade-right" data-aos-delay="100">
+            <div class="step-icon">1</div>
+            <div class="step-text">Create Order</div>
+        </div>
+        <div class="step" data-aos="fade-right" data-aos-delay="200">
+            <div class="step-icon">2</div>
+            <div class="step-text">Review Cart</div>
+        </div>
+        <div class="step" data-aos="fade-right" data-aos-delay="300">
+            <div class="step-icon">3</div>
+            <div class="step-text">Checkout</div>
+        </div>
+        <div class="step" data-aos="fade-right" data-aos-delay="400">
+            <div class="step-icon">4</div>
+            <div class="step-text">Confirmation</div>
+        </div>
+    </div>
+    
+    <h1 class="mb-4 text-center" data-aos="fade-up">Create Your Banner Order</h1>
+    <p class="text-muted text-center mb-5" data-aos="fade-up" data-aos-delay="100">Design your perfect banner in just a few simple steps</p>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Banner Upload Section -->
+            <div class="card mb-4 shadow-sm" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-upload me-2"></i>Upload Banner Image</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div id="upload-area" class="upload-area">
+                        <div class="text-center">
+                            <div class="upload-icon pulse">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h5 class="mb-3">Drag & Drop or Click to Upload</h5>
+                            <p class="text-muted mb-4">Support JPG and PNG only. Max file size 5MB.</p>
+                            <button type="button" id="upload-button" class="btn btn-primary btn-lg px-4">
+                                <i class="fas fa-folder-open me-2"></i>Browse Files
+                            </button>
+                            <input type="file" id="file-input" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <div id="preview-area" class="mt-4 text-center" style="display: none;">
+                        <div class="position-relative mb-4">
+                            <img id="banner-preview" src="" alt="Banner Preview" class="banner-preview img-fluid mb-3 shadow-sm">
+                            <div class="position-absolute top-0 end-0 m-3">
+                                <button type="button" id="remove-image" class="btn btn-light rounded-circle">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" id="change-image" class="btn btn-outline-primary me-3">
+                            <i class="fas fa-exchange-alt me-2"></i>Change Image
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Banner Size Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-ruler-combined me-2"></i>Select Banner Size</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <% bannerSizes.forEach(function(size) { %>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="banner-size-card card h-100 p-3 text-center" data-size="<%= size.id %>">
+                                <div class="card-body p-2">
+                                    <h5 class="card-title"><%= size.name %></h5>
+                                    <p class="card-text mb-0">
+                                        <small><%= size.width %>' × <%= size.height %>'</small>
+                                    </p>
+                                    <p class="text-primary fw-bold mt-2 mb-0">₹<%= size.price %></p>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quantity Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-sort-amount-up me-2"></i>Select Quantity</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <button type="button" class="btn btn-outline-secondary" id="decrease-qty">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" id="quantity" class="form-control text-center" value="1" min="1" max="100">
+                                <button type="button" class="btn btn-outline-secondary" id="increase-qty">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Order Summary -->
+            <div class="card sticky-top" style="top: 90px; z-index: 100;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="order-summary">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Selected Size:</span>
+                            <span id="selected-size-text">Not selected</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Quantity:</span>
+                            <span id="selected-quantity-text">1</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Unit Price:</span>
+                            <span id="unit-price-text">₹0</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="fw-bold">Total Price:</span>
+                            <span class="fw-bold" id="total-price-text">₹0</span>
+                        </div>
+                        
+                        <div class="alert alert-info mb-3" id="validation-message">
+                            Please upload a banner image and select a size to continue.
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button id="add-to-cart-btn" class="btn btn-primary" disabled>
+                                <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                            </button>
+                            <a href="/order/cart" class="btn btn-outline-primary">
+                                <i class="fas fa-shopping-basket me-2"></i>View Cart
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Variables
+        let uploadedImageUrl = '';
+        let selectedSize = '';
+        let selectedPrice = 0;
+        let quantity = 1;
+        
+        // Elements
+        const fileInput = document.getElementById('file-input');
+        const uploadButton = document.getElementById('upload-button');
+        const uploadArea = document.getElementById('upload-area');
+        const previewArea = document.getElementById('preview-area');
+        const bannerPreview = document.getElementById('banner-preview');
+        const changeImageBtn = document.getElementById('change-image');
+        const removeImageBtn = document.getElementById('remove-image');
+        const sizeCards = document.querySelectorAll('.banner-size-card');
+        const quantityInput = document.getElementById('quantity');
+        const decreaseQtyBtn = document.getElementById('decrease-qty');
+        const increaseQtyBtn = document.getElementById('increase-qty');
+        const selectedSizeText = document.getElementById('selected-size-text');
+        const selectedQuantityText = document.getElementById('selected-quantity-text');
+        const unitPriceText = document.getElementById('unit-price-text');
+        const totalPriceText = document.getElementById('total-price-text');
+        const validationMessage = document.getElementById('validation-message');
+        const addToCartBtn = document.getElementById('add-to-cart-btn');
+        
+        // File upload handling
+        uploadButton.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', function() {
+            handleFileUpload(this.files);
+        });
+        
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', function() {
+            this.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            handleFileUpload(e.dataTransfer.files);
+        });
+        
+        function handleFileUpload(files) {
+            if (!files.length) return;
+            
+            const file = files[0];
+            
+            // Validate file type
+            if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                alert('Please upload a valid image file (JPG or PNG only).');
+                resetUploadArea();
+                return;
+            }
+            
+            // Validate file size (max 5MB to match server)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size exceeds 5MB limit.');
+                resetUploadArea();
+                return;
+            }
+            
+            // Create FormData
+            const formData = new FormData();
+            formData.append('banner', file);
+            
+            // Show loading indicator
+            previewArea.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Uploading...</p></div>';
+            previewArea.style.display = 'block';
+            uploadArea.style.display = 'none';
+            
+            // Upload file with timeout
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+            
+            fetch('/order/upload-banner', {
+                method: 'POST',
+                body: formData,
+                signal: controller.signal
+            })
+            .then(response => {
+                clearTimeout(timeout);
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Upload failed');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    uploadedImageUrl = data.imageUrl;
+                    showImagePreview(data.imageUrl);
+                    validateForm();
+                } else {
+                    throw new Error(data.error || 'Upload failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error.message || 'Upload failed. Please try again.');
+                resetUploadArea();
+            });
+        }
+        
+        function showImagePreview(url) {
+            bannerPreview.src = url;
+            previewArea.style.display = 'block';
+            uploadArea.style.display = 'none';
+        }
+        
+        function resetUploadArea() {
+            uploadedImageUrl = '';
+            previewArea.style.display = 'none';
+            uploadArea.style.display = 'block';
+            fileInput.value = '';
+            validateForm();
+        }
+        
+        // Change/remove image
+        changeImageBtn.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        removeImageBtn.addEventListener('click', function() {
+            resetUploadArea();
+        });
+        
+        // Banner size selection
+        sizeCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove selected class from all cards
+                sizeCards.forEach(c => c.classList.remove('selected'));
+                
+                // Add selected class to clicked card
+                this.classList.add('selected');
+                
+                // Get selected size and price
+                selectedSize = this.dataset.size;
+                
+                // Find price based on selectedSize
+                <% bannerSizes.forEach(function(size) { %>
+                if (selectedSize === '<%= size.id %>') {
+                    selectedPrice = <%= size.price %>;
+                }
+                <% }); %>
+                
+                // Update UI
+                updateOrderSummary();
+                validateForm();
+            });
+        });
+        
+        // Quantity controls
+        quantityInput.addEventListener('change', function() {
+            quantity = parseInt(this.value) || 1;
+            if (quantity < 1) quantity = 1;
+            if (quantity > 100) quantity = 100;
+            this.value = quantity;
+            
+            updateOrderSummary();
+        });
+        
+        decreaseQtyBtn.addEventListener('click', function() {
+            if (quantity > 1) {
+                quantity--;
+                quantityInput.value = quantity;
+                updateOrderSummary();
+            }
+        });
+        
+        increaseQtyBtn.addEventListener('click', function() {
+            if (quantity < 100) {
+                quantity++;
+                quantityInput.value = quantity;
+                updateOrderSummary();
+            }
+        });
+        
+        // Update order summary
+        function updateOrderSummary() {
+            selectedSizeText.textContent = selectedSize || 'Not selected';
+            selectedQuantityText.textContent = quantity;
+            unitPriceText.textContent = selectedPrice ? `₹${selectedPrice}` : '₹0';
+            totalPriceText.textContent = selectedPrice ? `₹${selectedPrice * quantity}` : '₹0';
+        }
+        
+        // Form validation
+        function validateForm() {
+            if (uploadedImageUrl && selectedSize) {
+                validationMessage.style.display = 'none';
+                addToCartBtn.disabled = false;
+            } else {
+                validationMessage.style.display = 'block';
+                addToCartBtn.disabled = true;
+                
+                // Update validation message
+                let message = 'Please ';
+                if (!uploadedImageUrl) message += 'upload a banner image';
+                if (!uploadedImageUrl && !selectedSize) message += ' and ';
+                if (!selectedSize) message += 'select a size';
+                message += ' to continue.';
+                
+                validationMessage.textContent = message;
+            }
+        }
+        
+        // Add to cart
+        addToCartBtn.addEventListener('click', function() {
+            if (!uploadedImageUrl || !selectedSize) return;
+            
+            // Create banner item
+            const bannerItem = {
+                image_url: uploadedImageUrl,
+                banner_size: selectedSize,
+                quantity: quantity
+            };
+            
+            // Send to server
+            fetch('/order/add-banner', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bannerItem)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    alert('Banner added to cart successfully!');
+                    
+                    // Reset form
+                    resetUploadArea();
+                    sizeCards.forEach(c => c.classList.remove('selected'));
+                    selectedSize = '';
+                    selectedPrice = 0;
+                    quantity = 1;
+                    quantityInput.value = 1;
+                    updateOrderSummary();
+                    validateForm();
+                    
+                    // Redirect to cart page
+                    window.location.href = '/order/cart';
+                } else {
+                    alert(data.error || 'Failed to add banner to cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add banner to cart: ' + error.message);
+            });
+        });
+        
+        // Initialize
+        updateOrderSummary();
+        validateForm();
+    });
+</script>
+
+<%- include('../../layouts/footer') %>

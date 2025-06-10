@@ -1,0 +1,563 @@
+<%- include('../../layouts/admin-header', {active: 'users'}) %>
+
+<!-- Page heading -->
+<div class="d-flex justify-content-between align-items-center mb-4" data-aos="fade-up">
+    <div>
+        <h1 class="h2 mb-0">User Details</h1>
+        <p class="text-muted">View and manage user information</p>
+    </div>
+    <div>
+        <a href="/admin/users" class="btn btn-outline-secondary me-2">
+            <i class="fas fa-arrow-left me-2"></i>Back to Users
+        </a>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="fas fa-eye me-2"></i>View Site
+        </a>
+    </div>
+</div>
+
+<!-- User Information Card -->
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Basic Information -->
+        <div class="card shadow-sm mb-4" data-aos="fade-up">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-user text-primary me-2"></i>Basic Information</h5>
+                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                    <i class="fas fa-edit me-1"></i>Edit Details
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted">First Name</label>
+                        <p class="mb-0"><%= userDetail.first_name %></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted">Last Name</label>
+                        <p class="mb-0"><%= userDetail.last_name %></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted">Email</label>
+                        <p class="mb-0"><%= userDetail.email %></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted">Phone</label>
+                        <p class="mb-0"><%= userDetail.phone || 'Not provided' %></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted">User ID</label>
+                        <p class="mb-0"><span class="badge bg-light text-dark"><%= userDetail.id %></span></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted">Registered On</label>
+                        <p class="mb-0"><%= new Date(userDetail.created_at).toLocaleDateString() %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Company Information -->
+        <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0"><i class="fas fa-building text-primary me-2"></i>Company Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted">Company Name</label>
+                        <p class="mb-0"><%= userDetail.company_name || 'Not provided' %></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted">Zone</label>
+                        <p class="mb-0"><%= userDetail.zone || 'Not provided' %></p>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label text-muted">Company Address</label>
+                        <p class="mb-0"><%= userDetail.company_address || 'Not provided' %></p>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-muted">City</label>
+                        <p class="mb-0"><%= userDetail.city || 'Not provided' %></p>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-muted">State</label>
+                        <p class="mb-0"><%= userDetail.state || 'Not provided' %></p>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-muted">Zipcode</label>
+                        <p class="mb-0"><%= userDetail.zipcode || 'Not provided' %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Addresses -->
+        <% if (userDetail.addresses && userDetail.addresses.length > 0) { %>
+        <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0"><i class="fas fa-map-marker-alt text-primary me-2"></i>Saved Addresses</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <% userDetail.addresses.forEach((address, index) => { %>
+                    <div class="col-md-6 mb-3">
+                        <div class="border rounded p-3 <%= address.is_default ? 'border-primary bg-light' : '' %>">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="mb-0"><%= address.address_name %></h6>
+                                <% if (address.is_default) { %>
+                                <span class="badge bg-primary">Default</span>
+                                <% } %>
+                            </div>
+                            <p class="mb-1"><%= address.first_name %> <%= address.last_name %></p>
+                            <p class="mb-1"><%= address.address_line1 %></p>
+                            <% if (address.address_line2) { %>
+                            <p class="mb-1"><%= address.address_line2 %></p>
+                            <% } %>
+                            <p class="mb-1"><%= address.city %>, <%= address.state %> <%= address.zipcode %></p>
+                            <p class="mb-0 text-muted"><i class="fas fa-phone fa-sm me-1"></i><%= address.phone %></p>
+                        </div>
+                    </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+        <!-- User Orders -->
+        <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0"><i class="fas fa-shopping-cart text-primary me-2"></i>Order History</h5>
+            </div>
+            <div class="card-body">
+                <% if (userOrders && userOrders.length > 0) { %>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% userOrders.forEach(order => { %>
+                            <tr>
+                                <td><%= order.order_id || order.id %></td>
+                                <td><%= new Date(order.created_at).toLocaleDateString() %></td>
+                                <td><%= order.items ? order.items.length : 0 %> items</td>
+                                <td>₹<%= order.total_price || '0.00' %></td>
+                                <td>
+                                    <span class="badge bg-<%= order.status === 'pending' ? 'warning' : order.status === 'confirmed' ? 'success' : 'secondary' %>">
+                                        <%= order.status || 'pending' %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="/admin/orders/<%= order.id %>" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+                <% } else { %>
+                <div class="text-center py-4">
+                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No orders found for this user</p>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- User Type & Actions -->
+        <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0"><i class="fas fa-shield-alt text-primary me-2"></i>User Type & Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label text-muted">Current User Type</label>
+                    <div>
+                        <% if(userDetail.user_type === 'Super User') { %>
+                            <span class="badge bg-danger fs-6">Super User</span>
+                        <% } else if(userDetail.user_type === 'Admin') { %>
+                            <span class="badge bg-primary fs-6">Admin</span>
+                        <% } else { %>
+                            <span class="badge bg-info fs-6">Normal User</span>
+                        <% } %>
+                    </div>
+                </div>                <!-- User Type Change - Only for Super Users -->
+                <% if(user.user_type === 'Super User' && userDetail.user_type !== 'Super User') { %>
+                <div class="mb-3">
+                    <label class="form-label text-muted">Change User Type</label>
+                    <div class="d-grid gap-2">
+                        <% if(userDetail.user_type === 'Admin') { %>
+                        <button type="button" class="btn btn-outline-info btn-sm" onclick="changeUserType('User')">
+                            <i class="fas fa-user-minus me-1"></i>Make Normal User
+                        </button>
+                        <% } else { %>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="changeUserType('Admin')">
+                            <i class="fas fa-user-shield me-1"></i>Make Admin
+                        </button>
+                        <% } %>
+                    </div>
+                </div>
+                <% } %><hr>                <!-- Password Information -->
+                <div class="mb-3">
+                    <label class="form-label text-muted">Password Security</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" value="<%= userDetail.password %>" id="passwordField" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="passwordIcon"></i>
+                        </button>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt text-success me-1"></i>
+                        This is a secure bcrypt hash - the original password cannot be recovered for security reasons
+                    </small>
+                    <% if(user.user_type === 'Super User') { %>
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
+                            <i class="fas fa-key me-1"></i>Reset User Password
+                        </button>
+                    </div>
+                    <% } else { %>
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-sm btn-secondary" disabled title="Only Super Users can reset passwords">
+                            <i class="fas fa-lock me-1"></i>Password Reset (Super User Only)
+                        </button>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="card shadow-sm" data-aos="fade-up" data-aos-delay="200">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0"><i class="fas fa-chart-bar text-primary me-2"></i>Quick Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="border-end">
+                            <h4 class="text-primary mb-0"><%= userOrders ? userOrders.length : 0 %></h4>
+                            <small class="text-muted">Total Orders</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-success mb-0"><%= userDetail.addresses ? userDetail.addresses.length : 0 %></h4>
+                        <small class="text-muted">Saved Addresses</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Edit User Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editUserForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="first_name" class="form-label">First Name *</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" value="<%= userDetail.first_name %>" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="last_name" class="form-label">Last Name *</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" value="<%= userDetail.last_name %>" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" value="<%= userDetail.email %>" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="text" class="form-control" id="phone" name="phone" value="<%= userDetail.phone || '' %>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="company_name" class="form-label">Company Name</label>
+                            <input type="text" class="form-control" id="company_name" name="company_name" value="<%= userDetail.company_name || '' %>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="zone" class="form-label">Zone</label>
+                            <select class="form-control" id="zone" name="zone">
+                                <option value="">Select Zone</option>
+                                <option value="North" <%= userDetail.zone === 'North' ? 'selected' : '' %>>North</option>
+                                <option value="South" <%= userDetail.zone === 'South' ? 'selected' : '' %>>South</option>
+                                <option value="East" <%= userDetail.zone === 'East' ? 'selected' : '' %>>East</option>
+                                <option value="West" <%= userDetail.zone === 'West' ? 'selected' : '' %>>West</option>
+                            </select>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="company_address" class="form-label">Company Address</label>
+                            <textarea class="form-control" id="company_address" name="company_address" rows="2"><%= userDetail.company_address || '' %></textarea>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <input type="text" class="form-control" id="city" name="city" value="<%= userDetail.city || '' %>">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="state" class="form-label">State</label>
+                            <input type="text" class="form-control" id="state" name="state" value="<%= userDetail.state || '' %>">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="zipcode" class="form-label">Zipcode</label>
+                            <input type="text" class="form-control" id="zipcode" name="zipcode" value="<%= userDetail.zipcode || '' %>">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>    </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resetPasswordModalLabel">Reset User Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="resetPasswordForm">
+                <div class="modal-body">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This will immediately change the user's password. They will need to use the new password to log in.
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">New Password *</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password" required minlength="6">
+                        <div class="form-text">Password must be at least 6 characters long.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirm New Password *</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required minlength="6">
+                        <div class="invalid-feedback" id="password-match-error">
+                            Passwords do not match.
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="show_passwords">
+                        <label class="form-check-label" for="show_passwords">
+                            Show passwords
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-key me-1"></i>Reset Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Toggle password visibility
+function togglePassword() {
+    const passwordField = document.getElementById('passwordField');
+    const passwordIcon = document.getElementById('passwordIcon');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        passwordIcon.className = 'fas fa-eye-slash';
+    } else {
+        passwordField.type = 'password';
+        passwordIcon.className = 'fas fa-eye';
+    }
+}
+
+// Change user type
+function changeUserType(newType) {
+    const userTypeText = newType === 'Admin' ? 'Admin' : newType === 'User' ? 'Normal User' : newType;
+    
+    enhancedAlerts.confirm(
+        'Confirm User Type Change',
+        `Are you sure you want to change this user to ${userTypeText}?`,
+        () => {
+            // User confirmed, proceed with the change
+            fetch(`/admin/users/<%= userDetail.id %>/update-type`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_type: newType })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    enhancedAlerts.success('Success!', data.message || `User type changed to ${userTypeText} successfully`);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    enhancedAlerts.error('Error!', data.error || 'Failed to update user type');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                enhancedAlerts.error('Error!', 'An error occurred while updating user type');
+            });
+        },
+        null, // onCancel callback (optional)
+        'Yes, Change',
+        'Cancel',
+        'warning'
+    );
+}
+
+// Edit user form submission
+document.getElementById('editUserForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    fetch(`/admin/users/<%= userDetail.id %>/update-details`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            enhancedAlerts.success('Success!', data.message || 'User details updated successfully');
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+            modal.hide();
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            enhancedAlerts.error('Error!', data.error || 'Failed to update user details');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        enhancedAlerts.error('Error!', 'An error occurred while updating user details');
+    });
+});
+
+// Show/hide passwords in reset modal
+document.getElementById('show_passwords').addEventListener('change', function() {
+    const newPasswordField = document.getElementById('new_password');
+    const confirmPasswordField = document.getElementById('confirm_password');
+    
+    if (this.checked) {
+        newPasswordField.type = 'text';
+        confirmPasswordField.type = 'text';
+    } else {
+        newPasswordField.type = 'password';
+        confirmPasswordField.type = 'password';
+    }
+});
+
+// Password confirmation validation
+document.getElementById('confirm_password').addEventListener('input', function() {
+    const newPassword = document.getElementById('new_password').value;
+    const confirmPassword = this.value;
+    const errorDiv = document.getElementById('password-match-error');
+    
+    if (confirmPassword && newPassword !== confirmPassword) {
+        this.classList.add('is-invalid');
+        errorDiv.style.display = 'block';
+    } else {
+        this.classList.remove('is-invalid');
+        errorDiv.style.display = 'none';
+    }
+});
+
+// Reset password form submission
+document.getElementById('resetPasswordForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const newPassword = document.getElementById('new_password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    
+    // Validate passwords match
+    if (newPassword !== confirmPassword) {
+        enhancedAlerts.error('Validation Error', 'Passwords do not match!');
+        return;
+    }
+    
+    // Validate minimum length
+    if (newPassword.length < 6) {
+        enhancedAlerts.error('Validation Error', 'Password must be at least 6 characters long!');
+        return;
+    }
+    
+    // Confirm action with enhanced dialog
+    enhancedAlerts.confirm(
+        'Confirm Password Reset',
+        `Are you sure you want to reset the password for <%= userDetail.first_name %> <%= userDetail.last_name %>? This action cannot be undone.`,
+        () => {
+            // User confirmed, proceed with password reset
+            const submitBtn = document.querySelector('#resetPasswordForm button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Resetting...';
+            
+            fetch(`/admin/users/<%= userDetail.id %>/reset-password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ new_password: newPassword })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    enhancedAlerts.success('Password Reset Complete', data.message || 'Password has been reset successfully');
+                    // Close modal and reset form
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('resetPasswordModal'));
+                    modal.hide();
+                    document.getElementById('resetPasswordForm').reset();
+                } else {
+                    enhancedAlerts.error('Reset Failed', data.error || 'Failed to reset password');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                enhancedAlerts.error('Network Error', 'An error occurred while resetting the password');
+            })
+            .finally(() => {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        },
+        null, // onCancel callback
+        'Yes, Reset Password',
+        'Cancel',
+        'danger'
+    );
+});
+</script>
+
+<%- include('../../layouts/admin-footer') %>

@@ -1,0 +1,129 @@
+<%- include('../../layouts/header') %>
+
+<div class="auth-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">                <div class="auth-form-wrapper fade-in">                    <div class="text-center mb-4">
+                        <div class="auth-logo-container mb-3">
+                            <img src="/images/banner.png" alt="Veerathamizh Digital Media" class="auth-banner">
+                        </div>
+                        <h2 class="form-title">Welcome Back</h2>
+                        <p class="text-muted">Sign in to continue to your account</p>
+                    </div>                      <form action="/auth/login" method="POST" id="loginForm">
+                        <div class="mb-3">
+                            <label for="identifier" class="form-label fw-semibold">Email or Phone Number</label><div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user text-primary"></i></span>
+                                <input type="text" class="form-control" id="identifier" name="identifier" placeholder="Email address or phone number" autocomplete="username" required>
+                            </div>
+                            <div class="form-text">
+                                Enter your registered email address or phone number
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label for="password" class="form-label fw-semibold">Password</label>
+                                <a href="/auth/forgot-password" class="text-decoration-none small text-primary">Forgot Password?</a>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock text-primary"></i></span>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword" tabindex="-1">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                                <label class="form-check-label" for="rememberMe">Remember me for 30 days</label>
+                            </div>
+                        </div>
+                          <div class="d-grid gap-2 mb-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-sign-in-alt me-2"></i>Log In
+                            </button>
+                        </div>
+                        <div class="text-center">
+                            <p class="mb-0">Don't have an account? <a href="/auth/register" class="text-decoration-none fw-semibold text-primary">Sign Up</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Login form submission with loading spinner
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            // Show loading spinner immediately when form is submitted
+            if (window.DBLoading) {
+                window.DBLoading.show('Authenticating...', 'login', 'Verifying your credentials');
+                console.log('Login form submitted - showing loading spinner');
+            } else {
+                console.warn('DBLoading not available');
+            }
+            
+            // Let the form submit normally - the spinner will show during server processing
+            // The page will redirect on success, hiding the spinner automatically
+        });
+    }
+    
+    // Password toggle visibility
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
+    
+    if (togglePassword && password) {
+        togglePassword.addEventListener('click', function() {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            
+            // Toggle icon
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+    }
+    
+    // Identifier validation
+    const identifier = document.getElementById('identifier');
+    if (identifier) {
+        identifier.addEventListener('input', function() {
+            // Check if input is an email or phone number
+            const isEmail = this.value.includes('@');
+            const isPhone = /^\d{10,15}$/.test(this.value.replace(/[^0-9]/g, ''));
+            
+            if (isEmail) {
+                // If it's an email, update icon and validation
+                this.previousElementSibling.innerHTML = '<i class="fas fa-envelope text-primary"></i>';
+            } else {
+                // If it's a phone number, update icon
+                this.previousElementSibling.innerHTML = '<i class="fas fa-phone text-primary"></i>';
+            }
+        });
+    }
+    
+    // Remember me checkbox feedback
+    const rememberMeCheckbox = document.getElementById('rememberMe');
+    if (rememberMeCheckbox) {
+        rememberMeCheckbox.addEventListener('change', function() {
+            const label = this.nextElementSibling;
+            if (this.checked) {
+                label.style.fontWeight = 'bold';
+                label.style.color = '#0d6efd';
+                console.log('Remember me enabled - session will be extended to 30 days');
+            } else {
+                label.style.fontWeight = 'normal';
+                label.style.color = '';
+                console.log('Remember me disabled - standard 7-day session');
+            }
+        });
+    }
+});
+</script>
+
+<%- include('../../layouts/footer') %>

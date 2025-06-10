@@ -1,0 +1,168 @@
+<%- include('../../layouts/header') %>
+
+<div class="container">
+    <div class="order-steps mb-5">
+        <div class="step">
+            <div class="step-icon">1</div>
+            <div class="step-text">Create Order</div>
+        </div>
+        <div class="step">
+            <div class="step-icon">2</div>
+            <div class="step-text">Review Cart</div>
+        </div>
+        <div class="step">
+            <div class="step-icon">3</div>
+            <div class="step-text">Checkout</div>
+        </div>
+        <div class="step active">
+            <div class="step-icon">4</div>
+            <div class="step-text">Confirmation</div>
+        </div>
+    </div>
+    
+    <div class="text-center mb-5">
+        <div class="display-1 text-success mb-4">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h1 class="mb-3">Order Confirmed!</h1>
+        <p class="lead">Your order has been placed successfully.</p>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Order Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Order ID:</div>
+                        <div class="col-md-8"><%= order.order_id %></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Order Date:</div>
+                        <div class="col-md-8"><%= new Date(order.order_date).toLocaleString() %></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Delivery Option:</div>
+                        <div class="col-md-8"><%= order.delivery_option %></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Payment Method:</div>
+                        <div class="col-md-8"><%= order.payment.method %></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Expected Delivery:</div>
+                        <div class="col-md-8">
+                            <% 
+                            let deliveryDays = 7;
+                            if (order.delivery_option === 'Premium') {
+                                deliveryDays = 2;
+                            } else if (order.delivery_option === 'Express') {
+                                deliveryDays = 5;
+                            }
+                            
+                            const deliveryDate = new Date(order.order_date);
+                            deliveryDate.setDate(deliveryDate.getDate() + deliveryDays);
+                            %>
+                            <%= deliveryDate.toLocaleDateString() %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Delivery Address</h5>
+                </div>
+                <div class="card-body">
+                    <address>
+                        <%= order.delivery_address.first_name %> <%= order.delivery_address.last_name %><br>
+                        <%= order.delivery_address.address_line1 %><br>
+                        <%= order.delivery_address.city %>, <%= order.delivery_address.state %> <%= order.delivery_address.zipcode %><br>
+                        Phone: <%= order.delivery_address.phone %>
+                    </address>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Size</th>
+                                    <th>Quantity</th>
+                                    <th class="text-end">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% let subtotal = 0; %>
+                                <% order.items.forEach(function(item) { %>
+                                    <% const itemTotal = item.price * item.quantity; %>
+                                    <% subtotal += itemTotal; %>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="<%= item.image_url %>" alt="Banner" class="me-2" style="width: 50px; height: 30px; object-fit: cover;">
+                                                Banner
+                                            </div>
+                                        </td>
+                                        <td><%= item.banner_size %></td>
+                                        <td><%= item.quantity %></td>
+                                        <td class="text-end">₹<%= itemTotal.toFixed(2) %></td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3" class="text-end">Subtotal:</th>
+                                    <td class="text-end">₹<%= subtotal.toFixed(2) %></td>
+                                </tr>
+                                <tr>
+                                    <th colspan="3" class="text-end">Delivery Fee:</th>
+                                    <% 
+                                    let deliveryFee = 0;
+                                    if (order.delivery_option === 'Premium') {
+                                        deliveryFee = 250;
+                                    } else if (order.delivery_option === 'Express') {
+                                        deliveryFee = 150;
+                                    }
+                                    %>
+                                    <td class="text-end">₹<%= deliveryFee.toFixed(2) %></td>
+                                </tr>
+                                <tr>
+                                    <th colspan="3" class="text-end">Total:</th>
+                                    <td class="text-end fw-bold">₹<%= (subtotal + deliveryFee).toFixed(2) %></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info">
+                <div class="d-flex">
+                    <div class="me-3">
+                        <i class="fas fa-envelope fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">Order Confirmation Sent</h5>
+                        <p class="mb-0">We've sent an order confirmation email to <strong><%= user ? user.email : 'your email address' %></strong> with your order details.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <a href="/" class="btn btn-primary btn-lg"><i class="fas fa-home me-2"></i>Back to Home</a>
+                <a href="/user/orders" class="btn btn-outline-primary"><i class="fas fa-clipboard-list me-2"></i>View My Orders</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../../layouts/footer') %>

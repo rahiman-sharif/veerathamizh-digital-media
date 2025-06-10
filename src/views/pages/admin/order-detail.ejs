@@ -1,0 +1,974 @@
+<%- include('../../layouts/admin-header', {active: 'orders'}) %>
+
+<!-- Page heading -->
+<div class="d-flex justify-content-between align-items-center mb-4" data-aos="fade-up">
+    <div class="d-flex align-items-center">
+        <a href="/admin/orders" class="btn btn-outline-secondary me-3">
+            <i class="fas fa-arrow-left me-2"></i>Back to Orders
+        </a>
+        <div>
+            <h1 class="h2 mb-0">Order Details</h1>
+            <p class="text-muted mb-0">Order #<%= order.order_id || order.id %></p>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-success" onclick="downloadAllBanners()">
+            <i class="fas fa-download me-2"></i>Download All Images
+        </button>
+        <button class="btn btn-outline-primary" onclick="printOrderDetails()">
+            <i class="fas fa-print me-2"></i>Print
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Main Order Information -->
+    <div class="col-lg-8">
+        <!-- Order Header Card -->
+        <div class="card shadow-sm mb-4" data-aos="fade-up">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shopping-cart me-2"></i>Order #<%= order.order_id || order.id %>
+                    </h5>                    <div class="d-flex align-items-center gap-3">
+                        <!-- Status Badge -->
+                        <% 
+                            let statusClass = 'bg-secondary';
+                            let statusIcon = 'fas fa-clock';
+                            switch(order.status) {
+                                case 'pending': 
+                                    statusClass = 'bg-warning text-dark'; 
+                                    statusIcon = 'fas fa-clock';
+                                    break;
+                                case 'received': 
+                                    statusClass = 'bg-info'; 
+                                    statusIcon = 'fas fa-check-circle';
+                                    break;
+                                case 'printing': 
+                                    statusClass = 'bg-primary'; 
+                                    statusIcon = 'fas fa-print';
+                                    break;
+                                case 'printed': 
+                                    statusClass = 'bg-success'; 
+                                    statusIcon = 'fas fa-check-double';
+                                    break;
+                                case 'shipped': 
+                                    statusClass = 'bg-warning text-dark'; 
+                                    statusIcon = 'fas fa-truck';
+                                    break;
+                                case 'delivered': 
+                                    statusClass = 'bg-success'; 
+                                    statusIcon = 'fas fa-box-open';
+                                    break;
+                                case 'cancelled': 
+                                    statusClass = 'bg-danger'; 
+                                    statusIcon = 'fas fa-times-circle';
+                                    break;
+                            }
+                        %>
+                        <span class="badge <%= statusClass %> px-3 py-2">
+                            <i class="<%= statusIcon %> me-1"></i>
+                            <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-3">Order Information</h6>
+                        <p class="mb-2"><strong>Order Date:</strong> <%= new Date(order.created_at).toLocaleDateString() %></p>
+                        <p class="mb-2"><strong>Order Time:</strong> <%= new Date(order.created_at).toLocaleTimeString() %></p>
+                        <% if (order.updated_at && order.updated_at !== order.created_at) { %>
+                            <p class="mb-2"><strong>Last Updated:</strong> <%= new Date(order.updated_at).toLocaleString() %></p>
+                        <% } %>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-3">Order Details</h6>
+                        <% if (order.delivery_option) { %>
+                            <p class="mb-2"><strong>Delivery Option:</strong> 
+                                <span class="badge bg-light text-dark"><%= order.delivery_option %></span>
+                            </p>
+                        <% } %>
+                        <% if (order.payment && order.payment.method) { %>
+                            <p class="mb-2"><strong>Payment Method:</strong> 
+                                <span class="badge bg-light text-dark"><%= order.payment.method.toUpperCase() %></span>
+                            </p>
+                        <% } %>
+                        <p class="mb-2"><strong>Total Items:</strong> <%= order.items.length %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Items with Enhanced Download Privileges -->
+        <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Order Items</h5>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-success" onclick="downloadAllBanners()">
+                        <i class="fas fa-download me-1"></i>Download All
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary" onclick="openBulkPreview()">
+                        <i class="fas fa-images me-1"></i>Bulk Preview
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="10%">Preview</th>
+                                <th width="15%">Banner Details</th>
+                                <th width="10%">Size</th>
+                                <th width="10%">Quantity</th>
+                                <th width="12%">Unit Price</th>
+                                <th width="12%">Total</th>
+                                <th width="20%">Admin Actions</th>
+                                <th width="11%">Download</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% let grandTotal = 0; %>
+                            <% order.items.forEach(function(item, index) { %>
+                                <% 
+                                    const itemTotal = item.price * item.quantity;
+                                    grandTotal += itemTotal;
+                                %>
+                                <tr>
+                                    <td>
+                                        <img src="<%= item.image_url %>" 
+                                             alt="Banner <%= index + 1 %>" 
+                                             class="img-thumbnail banner-preview admin-preview" 
+                                             style="max-width: 80px; max-height: 80px; cursor: pointer;"
+                                             onclick="openAdminBannerModal('<%= item.image_url %>', '<%= order.id %>', '<%= item.id %>', <%= index + 1 %>)">
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <p class="mb-1 fw-medium">Banner <%= index + 1 %></p>
+                                            <small class="text-muted">Item ID: <%= item.id %></small><br>
+                                            <small class="text-muted">Added: <%= new Date(item.added_at).toLocaleDateString() %></small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary"><%= item.banner_size %></span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-medium fs-5"><%= item.quantity %></span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted">₹<%= item.price.toLocaleString() %></span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-success">₹<%= itemTotal.toLocaleString() %></span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group-vertical btn-group-sm w-100" role="group">
+                                            <button class="btn btn-outline-info btn-sm" 
+                                                    onclick="viewImageDetails('<%= item.image_url %>', <%= index + 1 %>)">
+                                                <i class="fas fa-info-circle me-1"></i>Details
+                                            </button>
+                                            <button class="btn btn-outline-warning btn-sm" 
+                                                    onclick="editItemNote('<%= order.id %>', '<%= item.id %>')">
+                                                <i class="fas fa-edit me-1"></i>Add Note
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-grid gap-1">
+                                            <button class="btn btn-success btn-sm" 
+                                                    onclick="downloadBanner('<%= item.image_url %>', '<%= order.id %>', '<%= item.id %>')">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                            <button class="btn btn-outline-secondary btn-sm" 
+                                                    onclick="copyImageUrl('<%= item.image_url %>')">
+                                                <i class="fas fa-link"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <th colspan="5" class="text-end">Grand Total:</th>
+                                <th class="text-success">₹<%= grandTotal.toLocaleString() %></th>
+                                <th colspan="2"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Status Timeline -->
+        <% if (order.statusHistory && order.statusHistory.length > 0) { %>
+            <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Order Timeline</h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <!-- Initial order creation -->
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-primary">
+                                <i class="fas fa-plus text-white"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Order Created</h6>
+                                <p class="timeline-description text-muted mb-1">Order was successfully placed by customer</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    <%= new Date(order.created_at).toLocaleString() %>
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Status history -->
+                        <% order.statusHistory.forEach(function(update, index) { %>
+                            <div class="timeline-item">
+                                <div class="timeline-marker bg-success">
+                                    <i class="fas fa-check text-white"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h6 class="timeline-title">Status Updated by Admin</h6>
+                                    <p class="timeline-description mb-1">
+                                        Order status changed to: 
+                                        <span class="fw-bold text-primary">
+                                            <%= update.status.charAt(0).toUpperCase() + update.status.slice(1) %>
+                                        </span>
+                                    </p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        <%= new Date(update.updatedAt).toLocaleString() %>
+                                        <% if (update.updatedBy) { %>
+                                            • <i class="fas fa-user me-1"></i>Admin ID: <%= update.updatedBy %>
+                                        <% } %>
+                                    </small>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- Order Notes Section -->
+        <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Order Notes</h5>
+                <button class="btn btn-sm btn-primary" onclick="addOrderNote('<%= order.id %>')">
+                    <i class="fas fa-plus me-1"></i>Add Note
+                </button>
+            </div>
+            <div class="card-body">
+                <% if (order.notes && order.notes.length > 0) { %>
+                    <div class="list-group list-group-flush">
+                        <% order.notes.forEach(function(note, index) { %>
+                            <div class="list-group-item px-0 <%= index === order.notes.length - 1 ? 'border-bottom-0' : '' %>">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <p class="mb-2"><%= note.note %></p>
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            <%= new Date(note.addedAt).toLocaleString() %>
+                                            <% if (note.addedBy) { %>
+                                                • <i class="fas fa-user me-1"></i>Admin ID: <%= note.addedBy %>
+                                            <% } %>
+                                        </small>
+                                    </div>
+                                    <span class="badge bg-primary">Note <%= index + 1 %></span>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-4">
+                        <i class="fas fa-sticky-note fa-2x text-muted mb-3"></i>
+                        <p class="text-muted">No notes added yet</p>
+                        <button class="btn btn-outline-primary btn-sm" onclick="addOrderNote('<%= order.id %>')">
+                            <i class="fas fa-plus me-1"></i>Add First Note
+                        </button>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Customer Information -->
+        <% if (customer) { %>
+            <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-user me-2"></i>Customer Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="user-avatar bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" 
+                             style="width: 50px; height: 50px; font-size: 18px; font-weight: bold;">
+                            <%= customer.first_name.charAt(0) %><%= customer.last_name.charAt(0) %>
+                        </div>
+                        <div>
+                            <h6 class="mb-0"><%= customer.first_name %> <%= customer.last_name %></h6>
+                            <small class="text-muted">Customer ID: <%= customer.id %></small>
+                        </div>
+                    </div>
+                    <p class="mb-2"><strong>Email:</strong> <a href="mailto:<%= customer.email %>"><%= customer.email %></a></p>
+                    <% if (customer.phone) { %>
+                        <p class="mb-2"><strong>Phone:</strong> <a href="tel:<%= customer.phone %>"><%= customer.phone %></a></p>
+                    <% } %>
+                    <% if (customer.company_name) { %>
+                        <p class="mb-2"><strong>Company:</strong> <%= customer.company_name %></p>
+                    <% } %>
+                    <p class="mb-0"><strong>User Type:</strong> 
+                        <span class="badge bg-light text-dark"><%= customer.user_type %></span>
+                    </p>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- Delivery Address -->
+        <% if (order.delivery_address) { %>
+            <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Delivery Address</h6>
+                </div>
+                <div class="card-body">
+                    <address class="mb-0">
+                        <strong><%= order.delivery_address.first_name %> <%= order.delivery_address.last_name %></strong><br>
+                        <%= order.delivery_address.address_line1 %><br>
+                        <% if (order.delivery_address.address_line2) { %>
+                            <%= order.delivery_address.address_line2 %><br>
+                        <% } %>
+                        <%= order.delivery_address.city %>, <%= order.delivery_address.state %><br>
+                        <%= order.delivery_address.zipcode %><br>
+                        <% if (order.delivery_address.phone) { %>
+                            <i class="fas fa-phone me-1"></i><%= order.delivery_address.phone %><br>
+                        <% } %>
+                        <% if (order.delivery_address.zone) { %>
+                            <span class="badge bg-info mt-2">Zone: <%= order.delivery_address.zone %></span>
+                        <% } %>
+                    </address>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- Order Summary -->
+        <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="fas fa-receipt me-2"></i>Order Summary</h6>
+            </div>
+            <div class="card-body">
+                <% 
+                    const orderTotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    const itemCount = order.items.length;
+                    const totalQuantity = order.items.reduce((sum, item) => sum + item.quantity, 0);
+                %>
+                <div class="row mb-2">
+                    <div class="col">Items:</div>
+                    <div class="col-auto fw-bold"><%= itemCount %> item<%= itemCount > 1 ? 's' : '' %></div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">Total Quantity:</div>
+                    <div class="col-auto fw-bold"><%= totalQuantity %></div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">Subtotal:</div>
+                    <div class="col-auto">₹<%= orderTotal.toLocaleString() %></div>
+                </div>
+                <% if (order.delivery_option) { %>
+                    <div class="row mb-2">
+                        <div class="col">Delivery (<%= order.delivery_option %>):</div>
+                        <div class="col-auto">
+                            <% 
+                                let deliveryFee = 0;
+                                if (order.delivery_option === 'Express') deliveryFee = 200;
+                                else if (order.delivery_option === 'Premium') deliveryFee = 500;
+                            %>
+                            <%= deliveryFee === 0 ? 'Free' : '₹' + deliveryFee %>
+                        </div>
+                    </div>
+                <% } %>
+                <hr>
+                <div class="row">
+                    <div class="col"><strong>Total:</strong></div>
+                    <div class="col-auto">
+                        <strong class="text-success fs-5">₹<%= orderTotal.toLocaleString() %></strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Actions -->
+        <div class="card shadow-sm" data-aos="fade-up" data-aos-delay="400">
+            <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="fas fa-tools me-2"></i>Admin Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success" onclick="downloadAllBanners()">
+                        <i class="fas fa-download me-2"></i>Download All Images
+                    </button>
+                    <button class="btn btn-primary" onclick="addOrderNote('<%= order.id %>')">
+                        <i class="fas fa-sticky-note me-2"></i>Add Order Note
+                    </button>
+                    <button class="btn btn-info" onclick="printOrderDetails()">
+                        <i class="fas fa-print me-2"></i>Print Order
+                    </button>
+                    <button class="btn btn-warning" onclick="exportOrderData()">
+                        <i class="fas fa-file-export me-2"></i>Export Data
+                    </button>
+                    <a href="/admin/orders" class="btn btn-outline-secondary">
+                        <i class="fas fa-list me-2"></i>Back to Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Banner Modal for Admin -->
+<div id="adminBannerModal" class="banner-modal admin-modal">
+    <span class="banner-modal-close" onclick="closeAdminBannerModal()">&times;</span>
+    <img class="banner-modal-content" id="adminBannerModalImg">
+    <div class="banner-modal-buttons admin-modal-buttons">
+        <div class="btn-group mb-3" role="group">
+            <a href="#" id="adminDownloadBannerLink" class="btn btn-success">
+                <i class="fas fa-download me-2"></i>Download Original
+            </a>
+            <button class="btn btn-primary" onclick="copyImageUrl()">
+                <i class="fas fa-copy me-2"></i>Copy URL
+            </button>
+            <button class="btn btn-info" onclick="showImageDetails()">
+                <i class="fas fa-info-circle me-2"></i>Details
+            </button>
+        </div>
+        <div id="imageDetails" class="text-white text-center"></div>
+    </div>
+</div>
+
+<!-- Bulk Preview Modal -->
+<div id="bulkPreviewModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Bulk Banner Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="bulkPreviewContent">
+                    <!-- Bulk preview content will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="downloadAllBanners()">
+                    <i class="fas fa-download me-2"></i>Download All
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentImageUrl = '';
+let currentOrderId = '<%= order.id %>';
+
+// Enhanced Banner Modal Functions for Admin
+function openAdminBannerModal(imageSrc, orderId, itemId, bannerNumber) {
+    const modal = document.getElementById('adminBannerModal');
+    const modalImg = document.getElementById('adminBannerModalImg');
+    const downloadLink = document.getElementById('adminDownloadBannerLink');
+    const imageDetails = document.getElementById('imageDetails');
+    
+    currentImageUrl = imageSrc;
+    modal.style.display = "block";
+    modalImg.src = imageSrc;
+    downloadLink.href = imageSrc;
+    downloadLink.setAttribute('download', `order-${orderId}-banner-${bannerNumber}.jpg`);
+    
+    // Show image details
+    const img = new Image();
+    img.onload = function() {
+        imageDetails.innerHTML = `
+            <h6>Banner ${bannerNumber} Details</h6>
+            <p>Dimensions: ${this.width} x ${this.height} pixels</p>
+            <p>Item ID: ${itemId}</p>
+            <p>Order ID: ${orderId}</p>
+        `;
+    };
+    img.src = imageSrc;
+    
+    // Add fade-in animation
+    setTimeout(() => {
+        modal.classList.add('fade-in');
+        modalImg.classList.add('zoom-in');
+    }, 50);
+    
+    document.body.style.overflow = 'hidden';
+}
+
+function closeAdminBannerModal() {
+    const modal = document.getElementById('adminBannerModal');
+    const modalImg = document.getElementById('adminBannerModalImg');
+    
+    modal.classList.remove('fade-in');
+    modalImg.classList.remove('zoom-in');
+    
+    setTimeout(() => {
+        modal.style.display = "none";
+        document.body.style.overflow = 'auto';
+    }, 300);
+}
+
+// Download specific banner
+function downloadBanner(imageSrc, orderId, itemId) {
+    const link = document.createElement('a');
+    link.href = imageSrc;
+    link.download = `order-${orderId}-item-${itemId}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Banner downloaded successfully!', 'success');
+}
+
+// Download all banners with admin privileges
+function downloadAllBanners() {
+    const bannerImages = document.querySelectorAll('.banner-preview');
+    const orderId = '<%= order.id %>';
+    
+    if (bannerImages.length === 0) {
+        showToast('No images to download', 'warning');
+        return;
+    }
+    
+    showToast(`Downloading ${bannerImages.length} images...`, 'info');
+    
+    bannerImages.forEach((img, index) => {
+        setTimeout(() => {
+            const link = document.createElement('a');
+            link.href = img.src;
+            link.download = `order-${orderId}-banner-${index + 1}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            if (index === bannerImages.length - 1) {
+                setTimeout(() => {
+                    showToast('All images downloaded successfully!', 'success');
+                }, 500);
+            }
+        }, index * 800); // Increased delay for better download handling
+    });
+}
+
+// Copy image URL to clipboard
+function copyImageUrl(url = null) {
+    const urlToCopy = url || currentImageUrl;
+    navigator.clipboard.writeText(window.location.origin + urlToCopy).then(() => {
+        showToast('Image URL copied to clipboard!', 'success');
+    }).catch(() => {
+        showToast('Failed to copy URL', 'error');
+    });
+}
+
+// Show image details
+function showImageDetails() {
+    // This function can be expanded to show more detailed image information
+    showToast('Image details displayed in modal', 'info');
+}
+
+// View image details in a separate function
+function viewImageDetails(imageSrc, bannerNumber) {
+    const img = new Image();
+    img.onload = function() {
+        const details = `
+            Banner ${bannerNumber} Information:
+            
+            Image URL: ${imageSrc}
+            Dimensions: ${this.width} x ${this.height} pixels
+            File Size: ~${Math.round(imageSrc.length / 1024)} KB (estimated)
+            Format: ${imageSrc.split('.').pop().toUpperCase()}
+        `;
+        alert(details);
+    };
+    img.src = imageSrc;
+}
+
+// Add order note
+function addOrderNote(orderId) {
+    // Create modal for order note input
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.innerHTML = `
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Order Note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="orderNoteText" class="form-label">Enter order note/update message:</label>
+                        <textarea class="form-control" id="orderNoteText" rows="3" placeholder="Enter your note here..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitOrderNote('${orderId}')">Add Note</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
+    
+    // Focus on textarea when modal is shown
+    modal.addEventListener('shown.bs.modal', function () {
+        document.getElementById('orderNoteText').focus();
+    });
+    
+    // Remove modal from DOM when hidden
+    modal.addEventListener('hidden.bs.modal', function () {
+        document.body.removeChild(modal);
+    });
+}
+
+function submitOrderNote(orderId) {
+    const note = document.getElementById('orderNoteText').value.trim();
+    
+    if (note) {
+        fetch(`/admin/orders/${orderId}/notes`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ notes: note.trim() })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Order note added successfully!', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                throw new Error(data.error || 'Failed to add note');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Failed to add order note: ' + error.message, 'error');
+        });
+    }
+}
+
+// Edit item note (placeholder for future feature)
+function editItemNote(orderId, itemId) {
+    showToast('Item notes feature coming soon!', 'info');
+}
+
+// Bulk preview
+function openBulkPreview() {
+    const bannerImages = document.querySelectorAll('.banner-preview');
+    const bulkPreviewContent = document.getElementById('bulkPreviewContent');
+    
+    bulkPreviewContent.innerHTML = '';
+    
+    bannerImages.forEach((img, index) => {
+        const col = document.createElement('div');
+        col.className = 'col-md-4 col-lg-3 mb-3';
+        col.innerHTML = `
+            <div class="card">
+                <img src="${img.src}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                <div class="card-body p-2 text-center">
+                    <small class="text-muted">Banner ${index + 1}</small>
+                    <div class="btn-group w-100 mt-2" role="group">
+                        <button class="btn btn-sm btn-success" onclick="downloadBanner('${img.src}', '${currentOrderId}', 'item-${index + 1}')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="btn btn-sm btn-primary" onclick="openAdminBannerModal('${img.src}', '${currentOrderId}', 'item-${index + 1}', ${index + 1})">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        bulkPreviewContent.appendChild(col);
+    });
+    
+    const bulkModal = new bootstrap.Modal(document.getElementById('bulkPreviewModal'));
+    bulkModal.show();
+}
+
+// Print order details
+function printOrderDetails() {
+    window.print();
+}
+
+// Export order data
+function exportOrderData() {
+    const orderData = {
+        orderId: '<%= order.id %>',
+        orderNumber: '<%= order.order_id || order.id %>',
+        status: '<%= order.status %>',
+        customer: '<%= customer ? customer.first_name + " " + customer.last_name : "Unknown" %>',
+        items: [<% order.items.forEach((item, index) => { %>
+            {
+                id: '<%= item.id %>',
+                imageUrl: '<%= item.image_url %>',
+                size: '<%= item.banner_size %>',
+                quantity: <%= item.quantity %>,
+                price: <%= item.price %>
+            }<%= index < order.items.length - 1 ? ',' : '' %>
+        <% }); %>],
+        total: <%= order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0) %>,
+        createdAt: '<%= order.created_at %>'
+    };
+    
+    const dataStr = JSON.stringify(orderData, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `order-${orderData.orderNumber}-data.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    showToast('Order data exported successfully!', 'success');
+}
+
+// Handle status changes
+document.addEventListener('DOMContentLoaded', function() {
+    const statusSelect = document.querySelector('.status-select');
+    if (statusSelect) {
+        statusSelect.addEventListener('change', function() {
+            const orderId = this.dataset.orderId;
+            const newStatus = this.value;
+            
+            fetch(`/admin/orders/${orderId}/status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Order status updated successfully!', 'success');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    throw new Error(data.error || 'Failed to update status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Failed to update order status: ' + error.message, 'error');
+                // Revert the select value
+                this.value = '<%= order.status %>';
+            });
+        });
+    }
+});
+
+// Toast notification function
+function showToast(message, type = 'info') {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
+    }, 5000);
+}
+
+// Close modals with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        if (document.getElementById('adminBannerModal').style.display === 'block') {
+            closeAdminBannerModal();
+        }
+    }
+});
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('adminBannerModal');
+    if (event.target === modal) {
+        closeAdminBannerModal();
+    }
+};
+</script>
+
+<style>
+/* Enhanced Admin Modal Styles */
+.admin-modal .banner-modal-content {
+    max-width: 90%;
+    max-height: 80%;
+}
+
+.admin-modal-buttons {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+/* Enhanced table styles */
+.table th {
+    background-color: #f8f9fa;
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* Admin preview enhancements */
+.admin-preview {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.admin-preview:hover {
+    transform: scale(1.1);
+    border-color: #007bff;
+    box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+}
+
+/* Button group styling */
+.btn-group-vertical .btn {
+    margin-bottom: 2px;
+}
+
+.btn-group-vertical .btn:last-child {
+    margin-bottom: 0;
+}
+
+/* Status select styling */
+.status-select {
+    font-weight: 600;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+.status-select:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.25);
+}
+
+/* Timeline enhancements */
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline-item {
+    position: relative;
+    padding: 20px 0 20px 60px;
+    border-left: 2px solid #dee2e6;
+    margin-left: 20px;
+}
+
+.timeline-item:last-child {
+    border-left: none;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -21px;
+    top: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.timeline-title {
+    color: #2c3e50;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.timeline-description {
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+/* Print styles */
+@media print {
+    .btn, .modal, .banner-modal {
+        display: none !important;
+    }
+    
+    .card {
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+    }
+    
+    .card-header {
+        background-color: #f8f9fa !important;
+        color: #000 !important;
+    }
+}
+
+/* Enhanced card hover effects */
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+/* User avatar styling */
+.user-avatar {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .btn-group-vertical .btn {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .admin-modal-buttons {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        transform: none;
+        margin-top: 20px;
+    }
+}
+</style>
+
+<%- include('../../layouts/admin-footer') %>

@@ -1,0 +1,62 @@
+[
+  {
+    "user_id": "e4dfdff1-ef93-43ec-b381-35e198e5a0e1",
+    "items": [
+      {
+        "id": "1749208010185",
+        "image_url": "/uploads/banner-1749208006910-828540230.jpg",
+        "banner_size": "10x12",
+        "quantity": 3,
+        "price": 1200,
+        "added_at": "2025-06-06T11:06:50.185Z"
+      },
+      {
+        "id": "1749208022118",
+        "image_url": "/uploads/banner-1749208018799-142136493.png",
+        "banner_size": "10x12",
+        "quantity": 4,
+        "price": 1200,
+        "added_at": "2025-06-06T11:07:02.118Z"
+      }
+    ],
+    "delivery_address": {
+      "first_name": "Rahiman",
+      "last_name": "Sharif",
+      "address_line1": "123 Test Street",
+      "address_line2": "Apartment 4B",
+      "city": "Test City",
+      "state": "Andhra Pradesh",
+      "zipcode": "604303",
+      "phone": "8754437191",
+      "zone": "Central"
+    },
+    "delivery_option": "Standard",
+    "payment": {
+      "method": "COD",
+      "status": "pending"
+    },
+    "status": "pending",
+    "order_date": "2025-06-06T11:07:19.759Z",
+    "id": "85bab0b1-d001-4b76-b399-bd10f24b2760",
+    "order_id": "a7b03706-7ae0-404c-8818-9d7da60b978d",
+    "created_at": "2025-06-06T11:07:19.760Z"
+  },
+  {
+    "id": "17da3a83-dfbd-45b1-9a00-8f28f8320a03",
+    "order_id": "b11ce543-bf8b-48ad-902a-3b04e26b91b7",
+    "user_id": "e4dfdff1-ef93-43ec-b381-35e198e5a0e1",
+    "items": [
+      {
+        "id": "1749211362768",
+        "image_url": "/uploads/banner-1749211360254-171934161.png",
+        "banner_size": "10x12",
+        "quantity": 2,
+        "price": 1200,
+        "added_at": "2025-06-06T12:02:42.768Z"
+      }
+    ],
+    "status": "draft",
+    "created_at": "2025-06-06T12:02:42.773Z",
+    "updated_at": "2025-06-06T12:02:42.773Z"
+  }
+]

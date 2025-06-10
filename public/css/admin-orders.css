@@ -1,0 +1,200 @@
+/* Admin Orders Table Styling */
+.admin-orders-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.admin-orders-table thead th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 0.75rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.admin-orders-table tbody td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.admin-orders-table tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.04);
+}
+
+/* Status badges */
+.status-badge {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 30px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    min-width: 90px;
+    justify-content: center;
+}
+
+/* Customer info styling */
+.customer-avatar {
+    width: 32px;
+    height: 32px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.customer-info {
+    max-width: 180px;
+    overflow: hidden;
+}
+
+/* Order ID styling */
+.order-id {
+    font-weight: 600;
+    font-family: monospace;
+    font-size: 14px;
+    padding: 4px 8px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* Items badge styling */
+.order-items-badge {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.items-preview {
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.order-items-badge:hover .items-preview {
+    opacity: 1;
+}
+
+/* Date styling */
+.order-date {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.85rem;
+}
+
+.order-date .date {
+    font-weight: 500;
+}
+
+.order-date .time {
+    opacity: 0.7;
+    font-size: 0.75rem;
+}
+
+/* Total amount styling */
+.total-amount {
+    font-weight: 600;
+    color: #28a745;
+}
+
+/* Payment badge styling */
+.payment-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background-color: #f8f9fa;
+}
+
+.payment-credit-card {
+    background-color: #e3f2fd;
+    color: #0d6efd;
+}
+
+.payment-paypal {
+    background-color: #fff8e1;
+    color: #ffc107;
+}
+
+.payment-cash {
+    background-color: #e8f5e9;
+    color: #28a745;
+}
+
+.payment-none {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+/* Action buttons styling */
+.action-buttons .btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Status dropdown styling */
+.status-dropdown {
+    min-width: 150px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.status-dropdown .form-select {
+    border: none;
+    box-shadow: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    width: 100%;
+    background-position: right 0.5rem center;
+}
+
+.change-status-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive optimization for smaller screens */
+@media (max-width: 1200px) {
+    .admin-orders-table .action-buttons .btn-text {
+        display: none;
+    }
+    
+    .admin-orders-table .order-date .time {
+        display: none;
+    }
+}
+
+@media (max-width: 992px) {
+    .admin-orders-table {
+        font-size: 0.85rem;
+    }
+    
+    .customer-info .text-muted {
+        display: none;
+    }
+}

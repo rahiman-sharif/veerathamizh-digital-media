@@ -1,0 +1,553 @@
+<%- include('../../layouts/header') %>
+
+<div class="container py-5">
+    <!-- Back to Orders -->
+    <div class="d-flex align-items-center mb-4" data-aos="fade-up">
+        <a href="/user/orders" class="btn btn-outline-secondary me-3">
+            <i class="fas fa-arrow-left me-2"></i>Back to Orders
+        </a>
+        <div>
+            <h1 class="mb-0">Order Details</h1>
+            <p class="text-muted mb-0">Order #<%= order.order_id || order.id %></p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Order Information -->
+        <div class="col-lg-8">
+            <!-- Order Header -->
+            <div class="card shadow-sm mb-4" data-aos="fade-up">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-shopping-cart me-2"></i>Order #<%= order.order_id || order.id %>
+                        </h5>
+                        <% 
+                            let statusClass = 'bg-secondary';
+                            let statusIcon = 'fas fa-clock';
+                            switch(order.status) {
+                                case 'pending': 
+                                    statusClass = 'bg-warning text-dark'; 
+                                    statusIcon = 'fas fa-clock';
+                                    break;
+                                case 'received': 
+                                    statusClass = 'bg-info'; 
+                                    statusIcon = 'fas fa-check-circle';
+                                    break;
+                                case 'printing': 
+                                    statusClass = 'bg-primary'; 
+                                    statusIcon = 'fas fa-print';
+                                    break;
+                                case 'printed': 
+                                    statusClass = 'bg-success'; 
+                                    statusIcon = 'fas fa-check-double';
+                                    break;
+                                case 'shipped': 
+                                    statusClass = 'bg-warning text-dark'; 
+                                    statusIcon = 'fas fa-truck';
+                                    break;
+                                case 'delivered': 
+                                    statusClass = 'bg-success'; 
+                                    statusIcon = 'fas fa-box-open';
+                                    break;
+                                case 'cancelled': 
+                                    statusClass = 'bg-danger'; 
+                                    statusIcon = 'fas fa-times-circle';
+                                    break;
+                            }
+                        %>
+                        <span class="badge <%= statusClass %> px-3 py-2">
+                            <i class="<%= statusIcon %> me-1"></i>
+                            <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Order Date:</strong> <%= new Date(order.created_at).toLocaleDateString() %></p>
+                            <p class="mb-2"><strong>Order Time:</strong> <%= new Date(order.created_at).toLocaleTimeString() %></p>
+                        </div>
+                        <div class="col-md-6">
+                            <% if (order.delivery_option) { %>
+                                <p class="mb-2"><strong>Delivery Option:</strong> <%= order.delivery_option %></p>
+                            <% } %>
+                            <% if (order.payment && order.payment.method) { %>
+                                <p class="mb-2"><strong>Payment Method:</strong> <%= order.payment.method.toUpperCase() %></p>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Order Items</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Banner</th>
+                                    <th>Size</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th class="text-end">Total</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% let grandTotal = 0; %>
+                                <% order.items.forEach(function(item, index) { %>
+                                    <% 
+                                        const itemTotal = item.price * item.quantity;
+                                        grandTotal += itemTotal;
+                                    %>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="<%= item.image_url %>" 
+                                                     alt="Banner <%= index + 1 %>" 
+                                                     class="img-thumbnail banner-preview me-3" 
+                                                     style="max-width: 80px; max-height: 80px; cursor: pointer;"
+                                                     onclick="openBannerModal('<%= item.image_url %>', '<%= order.id %>', '<%= item.id %>')">
+                                                <div>
+                                                    <p class="mb-0 fw-medium">Banner <%= index + 1 %></p>
+                                                    <small class="text-muted">Click to preview</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-dark"><%= item.banner_size %></span>
+                                        </td>
+                                        <td>
+                                            <span class="fw-medium"><%= item.quantity %></span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted">₹<%= item.price.toLocaleString() %></span>
+                                        </td>
+                                        <td class="text-end">
+                                            <span class="fw-bold">₹<%= itemTotal.toLocaleString() %></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-outline-primary" 
+                                                    onclick="downloadBanner('<%= item.image_url %>', '<%= order.id %>', '<%= item.id %>')">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="4" class="text-end">Grand Total:</th>
+                                    <th class="text-end">₹<%= grandTotal.toLocaleString() %></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Status Timeline -->
+            <% if (order.statusHistory && order.statusHistory.length > 0) { %>
+                <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="fas fa-history me-2"></i>Order Timeline</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="timeline">
+                            <!-- Initial order creation -->
+                            <div class="timeline-item">
+                                <div class="timeline-marker bg-primary">
+                                    <i class="fas fa-plus text-white"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h6 class="timeline-title">Order Created</h6>
+                                    <p class="timeline-description text-muted mb-1">Your order has been successfully placed</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        <%= new Date(order.created_at).toLocaleString() %>
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Status history -->
+                            <% order.statusHistory.forEach(function(update, index) { %>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-success">
+                                        <i class="fas fa-check text-white"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <h6 class="timeline-title">Status Updated</h6>
+                                        <p class="timeline-description mb-1">
+                                            Order status changed to: 
+                                            <span class="fw-bold text-primary">
+                                                <%= update.status.charAt(0).toUpperCase() + update.status.slice(1) %>
+                                            </span>
+                                        </p>
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            <%= new Date(update.updatedAt).toLocaleString() %>
+                                        </small>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Order Notes -->
+            <% if (order.notes && order.notes.length > 0) { %>
+                <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Order Notes</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <% order.notes.forEach(function(note, index) { %>
+                                <div class="list-group-item px-0 <%= index === order.notes.length - 1 ? 'border-bottom-0' : '' %>">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <p class="mb-2"><%= note.note %></p>
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>
+                                                <%= new Date(note.addedAt).toLocaleString() %>
+                                            </small>
+                                        </div>
+                                        <span class="badge bg-light text-primary">Note <%= index + 1 %></span>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Order Summary Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quick Actions -->
+            <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" onclick="downloadAllBanners()">
+                            <i class="fas fa-download me-2"></i>Download All Banners
+                        </button>
+                        <a href="/user/orders" class="btn btn-outline-secondary">
+                            <i class="fas fa-list me-2"></i>View All Orders
+                        </a>
+                        <a href="/order" class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i>Create New Order
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delivery Address -->
+            <% if (order.delivery_address) { %>
+                <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Delivery Address</h6>
+                    </div>
+                    <div class="card-body">
+                        <address class="mb-0">
+                            <strong><%= order.delivery_address.first_name %> <%= order.delivery_address.last_name %></strong><br>
+                            <%= order.delivery_address.address_line1 %><br>
+                            <% if (order.delivery_address.address_line2) { %>
+                                <%= order.delivery_address.address_line2 %><br>
+                            <% } %>
+                            <%= order.delivery_address.city %>, <%= order.delivery_address.state %><br>
+                            <%= order.delivery_address.zipcode %><br>
+                            <% if (order.delivery_address.phone) { %>
+                                <i class="fas fa-phone me-1"></i><%= order.delivery_address.phone %>
+                            <% } %>
+                        </address>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Order Summary -->
+            <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-receipt me-2"></i>Order Summary</h6>
+                </div>
+                <div class="card-body">
+                    <% 
+                        const orderTotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                        const itemCount = order.items.length;
+                        const totalQuantity = order.items.reduce((sum, item) => sum + item.quantity, 0);
+                    %>
+                    <div class="row mb-2">
+                        <div class="col">Items:</div>
+                        <div class="col-auto"><%= itemCount %> item<%= itemCount > 1 ? 's' : '' %></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">Quantity:</div>
+                        <div class="col-auto"><%= totalQuantity %></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">Subtotal:</div>
+                        <div class="col-auto">₹<%= orderTotal.toLocaleString() %></div>
+                    </div>
+                    <% if (order.delivery_option) { %>
+                        <div class="row mb-2">
+                            <div class="col">Delivery:</div>
+                            <div class="col-auto">
+                                <% 
+                                    let deliveryFee = 0;
+                                    if (order.delivery_option === 'Express') deliveryFee = 200;
+                                    else if (order.delivery_option === 'Premium') deliveryFee = 500;
+                                %>
+                                <%= deliveryFee === 0 ? 'Free' : '₹' + deliveryFee %>
+                            </div>
+                        </div>
+                    <% } %>
+                    <hr>
+                    <div class="row">
+                        <div class="col"><strong>Total:</strong></div>
+                        <div class="col-auto">
+                            <strong>₹<%= orderTotal.toLocaleString() %></strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Need Help? -->
+            <div class="card shadow-sm" data-aos="fade-up" data-aos-delay="400">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-question-circle me-2"></i>Need Help?</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Have questions about your order? We're here to help!</p>
+                    <div class="d-grid gap-2">
+                        <a href="tel:+919876543210" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-phone me-2"></i>Call Support
+                        </a>
+                        <a href="mailto:support@veerathamizh.com" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-envelope me-2"></i>Email Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Banner Image Modal -->
+<div id="bannerModal" class="banner-modal">
+    <span class="banner-modal-close" onclick="closeBannerModal()">&times;</span>
+    <img class="banner-modal-content" id="bannerModalImg">
+    <div class="banner-modal-buttons">
+        <a href="#" id="downloadBannerLink" class="btn btn-download">
+            <i class="fas fa-download me-2"></i>Download Banner
+        </a>
+    </div>
+</div>
+
+<script>
+    // Banner Modal Functions
+    function openBannerModal(imageSrc, orderId, itemId) {
+        const modal = document.getElementById('bannerModal');
+        const modalImg = document.getElementById('bannerModalImg');
+        const downloadLink = document.getElementById('downloadBannerLink');
+        
+        modal.style.display = "block";
+        modalImg.src = imageSrc;
+        downloadLink.href = imageSrc;
+        downloadLink.setAttribute('download', `banner-${orderId}-${itemId}.jpg`);
+        
+        // Add fade-in animation
+        setTimeout(() => {
+            modal.classList.add('fade-in');
+            modalImg.classList.add('zoom-in');
+        }, 50);
+        
+        // Prevent body scrolling when modal is open
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeBannerModal() {
+        const modal = document.getElementById('bannerModal');
+        const modalImg = document.getElementById('bannerModalImg');
+        
+        // Add fade-out animation
+        modal.classList.remove('fade-in');
+        modalImg.classList.remove('zoom-in');
+        
+        setTimeout(() => {
+            modal.style.display = "none";
+            document.body.style.overflow = 'auto';
+        }, 300);
+    }
+    
+    // Download specific banner
+    function downloadBanner(imageSrc, orderId, itemId) {
+        const link = document.createElement('a');
+        link.href = imageSrc;
+        link.download = `banner-${orderId}-${itemId}.jpg`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    
+    // Download all banners
+    function downloadAllBanners() {
+        const bannerImages = document.querySelectorAll('.banner-preview');
+        const orderId = '<%= order.id %>';
+        
+        bannerImages.forEach((img, index) => {
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = img.src;
+                link.download = `banner-${orderId}-${index + 1}.jpg`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, index * 500); // Delay each download by 500ms
+        });
+    }
+    
+    // Close modal when clicking outside the image
+    window.onclick = function(event) {
+        const modal = document.getElementById('bannerModal');
+        if (event.target === modal) {
+            closeBannerModal();
+        }
+    };
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && document.getElementById('bannerModal').style.display === 'block') {
+            closeBannerModal();
+        }
+    });
+</script>
+
+<style>
+/* Timeline Styles */
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline-item {
+    position: relative;
+    padding: 20px 0 20px 60px;
+    border-left: 2px solid #dee2e6;
+    margin-left: 20px;
+}
+
+.timeline-item:last-child {
+    border-left: none;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -21px;
+    top: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.timeline-title {
+    color: #2c3e50;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.timeline-description {
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+/* Banner Preview Hover Effect */
+.banner-preview {
+    transition: transform 0.2s ease;
+    border-radius: 8px;
+}
+
+.banner-preview:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Card Hover Effects */
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+/* Button Hover Effects */
+.btn {
+    transition: all 0.2s ease;
+}
+
+/* Badge Animations */
+.badge {
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Address */
+address {
+    line-height: 1.6;
+}
+
+/* Status-specific colors */
+.bg-light-primary {
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.bg-light-success {
+    background-color: rgba(25, 135, 84, 0.1);
+}
+
+.bg-light-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.bg-light-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+/* Table enhancements */
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,0,0,0.025);
+}
+</style>
+
+<%- include('../../layouts/footer') %>

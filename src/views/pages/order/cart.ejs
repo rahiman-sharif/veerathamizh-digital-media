@@ -1,0 +1,340 @@
+<%- include('../../layouts/header') %>
+
+<div class="container">
+    <div class="order-steps mb-5" data-aos="fade-up">
+        <div class="step">
+            <div class="step-icon">1</div>
+            <div class="step-text">Create Order</div>
+        </div>
+        <div class="step active">
+            <div class="step-icon">2</div>
+            <div class="step-text">Review Cart</div>
+        </div>
+        <div class="step">
+            <div class="step-icon">3</div>
+            <div class="step-text">Checkout</div>
+        </div>
+        <div class="step">
+            <div class="step-icon">4</div>
+            <div class="step-text">Confirmation</div>
+        </div>
+    </div>
+    
+    <h1 class="mb-4 text-center" data-aos="fade-up">Your Shopping Cart</h1>
+    <p class="text-center text-muted mb-5" data-aos="fade-up" data-aos-delay="100">Review your cart items before proceeding to checkout</p>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Cart Items -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0" style="color: white !important;"><i class="fas fa-shopping-basket me-2" style="color: white !important;"></i>Cart Items</h5>
+                </div>
+                <div class="card-body">
+                    <% if (cart && cart.items && cart.items.length > 0) { %>
+                        <div class="cart-items">
+                            <% cart.items.forEach(function(item, index) { %>
+                                <div class="cart-item" data-id="<%= item.id %>">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-2 col-4 mb-3 mb-md-0">
+                                            <img src="<%= item.image_url %>" alt="Banner Preview" class="img-fluid rounded">
+                                        </div>
+                                        <div class="col-md-3 col-8 mb-3 mb-md-0">
+                                            <h6 class="mb-1">Banner <%= index + 1 %></h6>
+                                            <p class="text-muted mb-0">Size: <%= item.banner_size %></p>
+                                        </div>
+                                        <div class="col-md-3 col-6">
+                                            <div class="input-group input-group-sm">
+                                                <button type="button" class="btn btn-outline-secondary decrease-qty" data-id="<%= item.id %>">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                                <input type="number" class="form-control text-center quantity-input" value="<%= item.quantity %>" 
+                                                       min="1" max="100" data-id="<%= item.id %>">
+                                                <button type="button" class="btn btn-outline-secondary increase-qty" data-id="<%= item.id %>">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-3">
+                                            <span class="fw-bold item-price" data-id="<%= item.id %>">₹0</span>
+                                        </div>
+                                        <div class="col-md-2 col-3 text-end">
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-item" data-id="<%= item.id %>">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% if (index < cart.items.length - 1) { %>
+                                    <hr class="my-3">
+                                <% } %>
+                            <% }); %>
+                        </div>
+                    <% } else { %>
+                        <div class="text-center py-5">
+                            <i class="fas fa-shopping-cart fa-3x mb-3 text-muted"></i>
+                            <h5>Your cart is empty</h5>
+                            <p class="text-muted mb-4">Looks like you haven't added any banners to your cart yet.</p>
+                            <a href="/order" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Create New Order
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Order Summary -->
+            <div class="card sticky-top" style="top: 90px; z-index: 100;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0" style="color: white !important;"><i class="fas fa-receipt me-2" style="color: white !important;"></i>Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="order-summary">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Total Items:</span>
+                            <span id="total-items"><%= cart && cart.items ? cart.items.length : 0 %></span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="fw-bold">Total:</span>
+                            <span class="fw-bold" id="cart-total">₹0</span>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="/checkout" id="checkout-btn" class="btn btn-primary <%= (!cart || !cart.items || cart.items.length === 0) ? 'disabled' : '' %>">
+                                <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                            </a>
+                            <a href="/order" class="btn btn-outline-primary">
+                                <i class="fas fa-plus me-2"></i>Add More Banners
+                            </a>
+                            <% if (cart && cart.items && cart.items.length > 0) { %>
+                                <button id="clear-cart-btn" class="btn btn-outline-danger">
+                                    <i class="fas fa-trash me-2"></i>Clear Cart
+                                </button>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Price data for different banner sizes
+        const sizePrices = {
+            '10x10': 1000,
+            '10x12': 1200,
+            '10x15': 1500,
+            '10x20': 2000
+        };
+        
+        // Items in cart (from session)
+        const cartItems = <%- JSON.stringify(cart && cart.items ? cart.items : []) %>;
+        
+        // Calculate prices for each item
+        function calculateItemPrices() {
+            let total = 0;
+            
+            cartItems.forEach(item => {
+                const price = sizePrices[item.banner_size] || 0;
+                const itemTotal = price * item.quantity;
+                total += itemTotal;
+                
+                // Update item price display
+                const itemPriceElement = document.querySelector(`.item-price[data-id="${item.id}"]`);
+                if (itemPriceElement) {
+                    itemPriceElement.textContent = `₹${itemTotal}`;
+                }
+            });
+            
+            // Update total price
+            document.getElementById('cart-total').textContent = `₹${total}`;
+            
+            // Enable/disable checkout button
+            const checkoutBtn = document.getElementById('checkout-btn');
+            if (cartItems.length === 0) {
+                checkoutBtn.classList.add('disabled');
+            } else {
+                checkoutBtn.classList.remove('disabled');
+            }
+        }
+        
+        // Handle quantity change
+        function setupQuantityControls() {
+            // Decrease buttons
+            document.querySelectorAll('.decrease-qty').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const input = document.querySelector(`.quantity-input[data-id="${id}"]`);
+                    let value = parseInt(input.value) || 1;
+                    
+                    if (value > 1) {
+                        value--;
+                        input.value = value;
+                        updateQuantity(id, value);
+                    }
+                });
+            });
+            
+            // Increase buttons
+            document.querySelectorAll('.increase-qty').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const input = document.querySelector(`.quantity-input[data-id="${id}"]`);
+                    let value = parseInt(input.value) || 1;
+                    
+                    if (value < 100) {
+                        value++;
+                        input.value = value;
+                        updateQuantity(id, value);
+                    }
+                });
+            });
+            
+            // Input change
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const id = this.dataset.id;
+                    let value = parseInt(this.value) || 1;
+                    
+                    if (value < 1) value = 1;
+                    if (value > 100) value = 100;
+                    
+                    this.value = value;
+                    updateQuantity(id, value);
+                });
+            });
+            
+            // Remove item buttons
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    removeItem(id);
+                });
+            });
+            
+            // Clear cart button
+            const clearCartBtn = document.getElementById('clear-cart-btn');
+            if (clearCartBtn) {
+                clearCartBtn.addEventListener('click', clearCart);
+            }
+        }
+        
+        // Update quantity on server
+        function updateQuantity(id, quantity) {
+            fetch(`/order/update-quantity/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ quantity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {                    // Update local data
+                    const itemIndex = cartItems.findIndex(item => item.id === id);
+                    if (itemIndex !== -1) {
+                        cartItems[itemIndex].quantity = quantity;
+                        calculateItemPrices();
+                    }
+                } else {
+                    if (window.enhancedAlerts) {
+                        window.enhancedAlerts.error('Update Failed', data.error || 'Failed to update quantity');
+                    } else {
+                        alert(data.error || 'Failed to update quantity');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (window.enhancedAlerts) {
+                    window.enhancedAlerts.error('Error', 'Failed to update quantity: ' + error.message);
+                } else {
+                    alert('Failed to update quantity: ' + error.message);
+                }
+            });
+        }
+        
+        // Remove item from cart
+        function removeItem(id) {
+            fetch(`/order/remove-banner/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove from local data
+                    const itemIndex = cartItems.findIndex(item => item.id === id);
+                    if (itemIndex !== -1) {
+                        cartItems.splice(itemIndex, 1);
+                    }
+                    
+                    // Remove from DOM
+                    const itemElement = document.querySelector(`.cart-item[data-id="${id}"]`);
+                    if (itemElement) {
+                        // If there's an HR after this element, remove it
+                        const nextElement = itemElement.nextElementSibling;
+                        if (nextElement && nextElement.tagName === 'HR') {
+                            nextElement.remove();
+                        }
+                        // If it's the last element with an HR before it, remove that HR
+                        else if (itemElement.previousElementSibling && itemElement.previousElementSibling.tagName === 'HR') {
+                            itemElement.previousElementSibling.remove();
+                        }
+                        
+                        itemElement.remove();
+                    }
+                    
+                    // Update UI
+                    calculateItemPrices();
+                    document.getElementById('total-items').textContent = cartItems.length;
+                    
+                    // If cart is empty now, refresh the page
+                    if (cartItems.length === 0) {
+                        location.reload();
+                    }
+                } else {
+                    alert(data.error || 'Failed to remove item');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to remove item: ' + error.message);
+            });
+        }
+        
+        // Clear entire cart
+        function clearCart() {
+            if (!confirm('Are you sure you want to clear your cart?')) {
+                return;
+            }
+            
+            fetch('/order/clear-cart', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirect to refresh page
+                    window.location.href = '/order';
+                } else {
+                    alert(data.error || 'Failed to clear cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to clear cart: ' + error.message);
+            });
+        }
+        
+        // Initialize
+        calculateItemPrices();
+        setupQuantityControls();
+    });
+</script>
+
+<%- include('../../layouts/footer') %>

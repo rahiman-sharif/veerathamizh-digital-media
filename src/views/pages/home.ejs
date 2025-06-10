@@ -1,0 +1,123 @@
+<%- include('../layouts/header') %>
+
+<!-- Banner Panel -->
+<div class="banner-panel mt-3">
+    <div class="container-fluid p-0">
+        <div class="banner-image-container" id="bannerContainer">
+            <div class="banner-placeholder"></div>
+            <img src="/images/banner.png" alt="Veerathamizh Digital Media Group" class="banner-showcase-image" id="bannerImage" loading="lazy" onload="this.classList.add('loaded');">
+        </div>
+    </div>
+</div>
+
+<!-- Hero Section -->
+<div class="hero-section mt-4" data-aos="fade-up">
+    <div class="container">
+        <div class="hero-content text-center">
+            <h1 class="hero-title">Welcome to Veerathamizh Digital Media Group</h1>
+            <p class="hero-subtitle">Your trusted partner for high-quality banner printing solutions</p>
+            <div class="hero-buttons">
+                <a href="/order" class="btn btn-light btn-lg me-3"><i class="fas fa-shopping-cart me-2"></i>Shop Now</a>
+                <a href="/contact" class="btn btn-outline-light btn-lg"><i class="fas fa-headset me-2"></i>Contact Us</a>
+            </div>
+        </div>
+    </div>
+    <div class="hero-shapes">
+        <div class="hero-shape hero-shape-1"></div>
+        <div class="hero-shape hero-shape-2"></div>
+    </div>
+</div>
+
+<div class="container">    <section class="offers-section mb-5">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title" data-aos="fade-up">Special Offers</h2>
+                <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Take advantage of our limited-time offers</p>
+            </div>
+        </div>
+        <div class="row">
+            <% const offerIcons = ['gift', 'percentage', 'truck', 'calendar-alt']; %>
+            <% const offerColors = ['primary', 'success', 'info', 'warning']; %>
+            <% offers.forEach(function(offer, index) { %>
+                <div class="col-md-3 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="<%= 100 * (index + 1) %>">
+                    <div class="card feature-card h-100 text-center p-4 position-relative">
+                        <span class="offer-badge bg-<%= offerColors[index % offerColors.length] %>">Special</span>
+                        <div class="card-body">
+                            <div class="feature-icon mb-4">
+                                <i class="fas fa-<%= offerIcons[index % offerIcons.length] %>"></i>
+                            </div>
+                            <h5 class="card-title"><%= offer %></h5>
+                            <p class="card-text text-muted">Limited time offer</p>
+                            <a href="/order" class="btn btn-sm btn-outline-primary mt-3">Get Offer</a>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </section>    <section class="features-section mb-5">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title" data-aos="fade-up">Why Choose Us</h2>
+                <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">We deliver quality and excellence in every print</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="fas fa-print"></i>
+                        </div>
+                        <h5 class="card-title">Premium Quality</h5>
+                        <p class="card-text">We use the highest quality materials and advanced printing technology to ensure your banners look perfect.</p>
+                        <a href="#" class="btn btn-link text-primary mt-3">Learn More <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <h5 class="card-title">Fast Delivery</h5>
+                        <p class="card-text">With our efficient production and delivery system, your orders reach you quickly and safely.</p>
+                        <a href="#" class="btn btn-link text-primary mt-3">Learn More <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h5 class="card-title">24/7 Support</h5>
+                        <p class="card-text">Our dedicated customer service team is always ready to assist you with any questions or concerns.</p>
+                        <a href="#" class="btn btn-link text-primary mt-3">Learn More <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>    <section class="cta-section text-center mb-5 py-5" data-aos="fade-up">
+        <div class="cta-content p-5 rounded">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h2 class="cta-title mb-4">Ready to Order Your Banner?</h2>
+                    <p class="cta-text mb-4">Start your order now and get your high-quality banners delivered to your doorstep. We offer great prices with fast delivery.</p>
+                    <div class="cta-actions">
+                        <a href="/order" class="btn btn-primary btn-lg me-3"><i class="fas fa-shopping-cart me-2"></i>Shop Now</a>
+                        <a href="/contact" class="btn btn-outline-primary btn-lg"><i class="fas fa-phone-alt me-2"></i>Talk to an Expert</a>
+                    </div>
+                    <div class="cta-features mt-5 d-flex justify-content-center">
+                        <div class="cta-feature mx-3"><i class="fas fa-check-circle text-success me-2"></i>Premium Quality</div>
+                        <div class="cta-feature mx-3"><i class="fas fa-check-circle text-success me-2"></i>Fast Delivery</div>
+                        <div class="cta-feature mx-3"><i class="fas fa-check-circle text-success me-2"></i>24/7 Support</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<%- include('../layouts/footer') %>

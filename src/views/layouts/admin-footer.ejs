@@ -1,0 +1,98 @@
+            </main>
+        </div>
+    </div>
+    
+    <!-- Admin Footer -->
+    <footer class="footer py-4 mt-5">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="copyright mb-0">&copy; 2025 Veerathamizh Digital Media Group. All rights reserved.</p>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-inline text-md-end mb-0 footer-bottom-links">
+                        <li class="list-inline-item"><a href="/">Back to Site</a></li>
+                        <li class="list-inline-item"><a href="/admin">Admin Dashboard</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <!-- Enhanced Alerts System -->
+    <script src="/js/enhanced-alerts.js"></script>
+    <!-- Custom JS -->
+    <script src="/js/main.js"></script>
+    <!-- Admin specific JS -->
+    <script src="/js/admin-orders.js"></script>
+    
+    <script>
+        // Initialize AOS animations
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+        
+        // Enable tooltips everywhere
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+        
+        // Admin specific initializations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize enhanced alerts if available
+            if (typeof EnhancedAlerts !== 'undefined') {
+                window.enhancedAlerts = new EnhancedAlerts();
+            }
+            
+            // Auto-refresh for admin dashboard if on dashboard page
+            if (window.location.pathname === '/admin' || window.location.pathname === '/admin/') {
+                // Refresh stats every 5 minutes
+                setInterval(function() {
+                    // Only refresh if user is still on the page and tab is active
+                    if (!document.hidden) {
+                        location.reload();
+                    }
+                }, 300000); // 5 minutes
+            }
+        });
+        
+        // Ensure proper footer positioning
+        function adjustFooterPosition() {
+            const body = document.body;
+            const html = document.documentElement;
+            const footer = document.querySelector('.footer');
+            
+            if (footer) {
+                const contentHeight = Math.max(
+                    body.scrollHeight,
+                    body.offsetHeight,
+                    html.clientHeight,
+                    html.scrollHeight,
+                    html.offsetHeight
+                );
+                
+                const windowHeight = window.innerHeight;
+                
+                if (contentHeight < windowHeight) {
+                    footer.classList.add('fixed-bottom');
+                } else {
+                    footer.classList.remove('fixed-bottom');
+                }
+            }
+        }
+        
+        // Run on page load and resize
+        window.addEventListener('load', adjustFooterPosition);
+        window.addEventListener('resize', adjustFooterPosition);
+    </script>
+</body>
+</html>
