@@ -1,123 +1,366 @@
 <%- include('../layouts/header') %>
 
-<!-- Banner Panel -->
-<div class="banner-panel mt-3">
-    <div class="container-fluid p-0">
-        <div class="banner-image-container" id="bannerContainer">
-            <div class="banner-placeholder"></div>
-            <img src="/images/banner.png" alt="Veerathamizh Digital Media Group" class="banner-showcase-image" id="bannerImage" loading="lazy" onload="this.classList.add('loaded');">
-        </div>
-    </div>
-</div>
-
-<!-- Hero Section -->
-<div class="hero-section mt-4" data-aos="fade-up">
+<!-- Modern Hero Section -->
+<section class="hero-container">
+    <div class="hero-background"></div>
+    <div class="hero-overlay"></div>
+    
+    <!-- Floating Shapes -->
+    <div class="floating-shape floating-shape-1"></div>
+    <div class="floating-shape floating-shape-2"></div>
+    <div class="floating-shape floating-shape-3"></div>
+    <div class="floating-shape floating-shape-4"></div>
+    
     <div class="container">
-        <div class="hero-content text-center">
-            <h1 class="hero-title">Welcome to Veerathamizh Digital Media Group</h1>
-            <p class="hero-subtitle">Your trusted partner for high-quality banner printing solutions</p>
-            <div class="hero-buttons">
-                <a href="/order" class="btn btn-light btn-lg me-3"><i class="fas fa-shopping-cart me-2"></i>Shop Now</a>
-                <a href="/contact" class="btn btn-outline-light btn-lg"><i class="fas fa-headset me-2"></i>Contact Us</a>
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <div class="hero-content" data-aos="fade-right">
+                    <div class="hero-badge">
+                        <i class="fas fa-star me-1"></i> Premium Digital Media Since 2025
+                    </div>
+                    
+                    <h1 class="hero-title">
+                        Transform Your Brand With <span style="color: var(--accent-color);">Veerathamizh</span>
+                    </h1>
+                    
+                    <p class="hero-subtitle">
+                        We deliver exceptional printing solutions that bring your vision to life with 
+                        stunning quality, precision, and unparalleled customer service.
+                    </p>
+                    
+                    <div class="d-flex flex-wrap gap-3 mb-5">
+                        <a href="/order" class="btn-modern-primary">
+                            <span>Start Your Project</span>
+                            <i class="fas fa-rocket ms-2"></i>
+                        </a>
+                        <a href="#services" class="btn-modern-secondary">
+                            <i class="fas fa-play me-2"></i>
+                            <span>Explore Services</span>
+                        </a>
+                    </div>
+                    
+                    <div class="d-flex flex-wrap justify-content-start gap-4 mt-4">
+                        <div data-aos="fade-up" data-aos-delay="200">
+                            <div class="counter-number" data-count="5000">0</div>
+                            <div class="text-light opacity-75">Clients</div>
+                        </div>
+                        <div data-aos="fade-up" data-aos-delay="400">
+                            <div class="counter-number" data-count="15000">0</div>
+                            <div class="text-light opacity-75">Projects</div>
+                        </div>
+                        <div data-aos="fade-up" data-aos-delay="600">
+                            <div class="counter-number" data-count="99">0</div>
+                            <div class="text-light opacity-75">% Satisfaction</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+              <div class="col-lg-5" data-aos="fade-left">
+                <div class="hero-glass mx-auto" style="max-width: 450px;">
+                    <div class="hero-logo-container">
+                        <div class="logo-glow"></div>
+                        <img src="/images/logo.png" alt="Veerathamizh Digital Media Logo" class="hero-logo">
+                        <div class="logo-shine"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="hero-shapes">
-        <div class="hero-shape hero-shape-1"></div>
-        <div class="hero-shape hero-shape-2"></div>
-    </div>
-</div>
+</section>
 
-<div class="container">    <section class="offers-section mb-5">
-        <div class="row">
-            <div class="col-12 text-center mb-5">
-                <h2 class="section-title" data-aos="fade-up">Special Offers</h2>
-                <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Take advantage of our limited-time offers</p>
+<!-- Services Section -->
+<section id="services" class="services-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-title-badge" data-aos="fade-up">Our Expertise</div>
+            <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">Premium Services</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
+                We provide comprehensive printing and digital media solutions tailored to your unique needs
+            </p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-flag"></i>
+                    </div>
+                    <h3 class="service-title">Banner Printing</h3>
+                    <p class="service-description">
+                        High-quality vinyl and fabric banners for all occasions with weather-resistant materials and vibrant colors.
+                    </p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Indoor & Outdoor Options</li>
+                        <li><i class="fas fa-check"></i> Custom Sizes Available</li>
+                        <li><i class="fas fa-check"></i> Weather Resistant</li>
+                        <li><i class="fas fa-check"></i> Fast Turnaround</li>
+                    </ul>
+                    <a href="/order" class="service-link">Order Now <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3 class="service-title">Custom Design</h3>
+                    <p class="service-description">
+                        Professional graphic design services to create stunning visuals that capture your brand essence.
+                    </p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Professional Designers</li>
+                        <li><i class="fas fa-check"></i> Unlimited Revisions</li>
+                        <li><i class="fas fa-check"></i> Brand Guidelines</li>
+                        <li><i class="fas fa-check"></i> Creative Excellence</li>
+                    </ul>
+                    <a href="/order" class="service-link">Start Design <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="700">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <h3 class="service-title">Express Delivery</h3>
+                    <p class="service-description">
+                        Fast and reliable delivery service ensuring your banners reach you on time, every time.
+                    </p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Same Day Delivery</li>
+                        <li><i class="fas fa-check"></i> Nationwide Shipping</li>
+                        <li><i class="fas fa-check"></i> Tracking Available</li>
+                        <li><i class="fas fa-check"></i> Secure Packaging</li>
+                    </ul>
+                    <a href="/order" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                </div>
             </div>
         </div>
-        <div class="row">
+    </div>
+</section>
+
+<!-- Offers Section -->
+<section class="offers-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-title-badge" data-aos="fade-up">Limited Time</div>
+            <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">Special Offers</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
+                Take advantage of our exclusive deals and save on your next project
+            </p>
+        </div>
+        
+        <div class="row g-4">
             <% const offerIcons = ['gift', 'percentage', 'truck', 'calendar-alt']; %>
-            <% const offerColors = ['primary', 'success', 'info', 'warning']; %>
+            <% const offerClasses = ['offer-bg-1', 'offer-bg-2', 'offer-bg-3', 'offer-bg-4']; %>
             <% offers.forEach(function(offer, index) { %>
-                <div class="col-md-3 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="<%= 100 * (index + 1) %>">
-                    <div class="card feature-card h-100 text-center p-4 position-relative">
-                        <span class="offer-badge bg-<%= offerColors[index % offerColors.length] %>">Special</span>
-                        <div class="card-body">
-                            <div class="feature-icon mb-4">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="<%= 200 * (index + 1) %>">
+                    <div class="offer-card <%= offerClasses[index % offerClasses.length] %>">
+                        <div class="offer-inner">
+                            <div class="offer-icon">
                                 <i class="fas fa-<%= offerIcons[index % offerIcons.length] %>"></i>
                             </div>
-                            <h5 class="card-title"><%= offer %></h5>
-                            <p class="card-text text-muted">Limited time offer</p>
-                            <a href="/order" class="btn btn-sm btn-outline-primary mt-3">Get Offer</a>
+                            <div class="offer-card-content">
+                                <h3 class="offer-title"><%= offer %></h3>
+                                <p class="offer-description">Limited time special offer for all our valued customers</p>
+                                <a href="/order" class="offer-action">
+                                    Claim Now <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             <% }); %>
         </div>
-    </section>    <section class="features-section mb-5">
-        <div class="row">
-            <div class="col-12 text-center mb-5">
-                <h2 class="section-title" data-aos="fade-up">Why Choose Us</h2>
-                <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">We deliver quality and excellence in every print</p>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-title-badge" data-aos="fade-up">Why Choose Us</div>
+            <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">Our Advantages</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
+                We deliver superior quality and excellence in every project
+            </p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-print"></i>
+                    </div>
+                    <h3 class="feature-title">Premium Quality</h3>
+                    <p>
+                        We use the highest quality materials and advanced printing technology to ensure 
+                        your banners look perfect and last longer.
+                    </p>
+                    <a href="/order" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3 class="feature-title">Fast Delivery</h3>
+                    <p>
+                        With our efficient production and delivery system, your orders reach you quickly and safely without compromising on quality.
+                    </p>
+                    <a href="/order" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3 class="feature-title">24/7 Support</h3>
+                    <p>
+                        Our dedicated customer service team is always ready to assist you with any questions or concerns throughout your project.
+                    </p>
+                    <a href="/contact" class="service-link">Contact Us <i class="fas fa-arrow-right"></i></a>
+                </div>            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            
+            <h2 class="cta-title" data-aos="fade-up" data-aos-delay="100">Ready to Elevate Your Brand?</h2>
+            
+            <p class="cta-text" data-aos="fade-up" data-aos-delay="200">
+                Start your order now and experience premium banner printing with exceptional quality, 
+                fast delivery, and professional service that exceeds expectations.
+            </p>
+            
+            <div class="cta-actions" data-aos="fade-up" data-aos-delay="400">
+                <a href="/order" class="btn-modern-primary">
+                    <i class="fas fa-shopping-cart me-2"></i>
+                    <span>Start Your Project</span>
+                </a>
+                <a href="/contact" class="btn-modern-secondary">
+                    <i class="fas fa-phone me-2"></i>
+                    <span>Get Free Quote</span>
+                </a>
+            </div>
+            
+            <div class="cta-features" data-aos="fade-up" data-aos-delay="600">
+                <div class="cta-feature">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Premium Quality</span>
+                </div>
+                <div class="cta-feature">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Fast Delivery</span>
+                </div>
+                <div class="cta-feature">
+                    <i class="fas fa-check-circle"></i>
+                    <span>24/7 Support</span>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="card feature-card h-100 text-center p-4">
-                    <div class="card-body">
-                        <div class="feature-icon">
-                            <i class="fas fa-print"></i>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-title-badge" data-aos="fade-up">Client Stories</div>
+            <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">What Our Clients Say</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
+                Discover why businesses trust us for their printing and digital media needs
+            </p>
+        </div>
+        
+        <div class="testimonial-slider" data-aos="fade-up" data-aos-delay="300">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
                         </div>
-                        <h5 class="card-title">Premium Quality</h5>
-                        <p class="card-text">We use the highest quality materials and advanced printing technology to ensure your banners look perfect.</p>
-                        <a href="#" class="btn btn-link text-primary mt-3">Learn More <i class="fas fa-arrow-right ms-1"></i></a>
+                        <p class="testimonial-text">
+                            "Veerathamizh Digital Media's banner printing service exceeded all our expectations. 
+                            The quality was impeccable, and they delivered ahead of schedule. Highly recommended!"
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">
+                                <div class="avatar-placeholder">RS</div>
+                            </div>
+                            <div class="testimonial-info">
+                                <h5 class="author-name">Raj Sharma</h5>
+                                <p class="author-title">Marketing Director, TechCorp</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="card feature-card h-100 text-center p-4">
-                    <div class="card-body">
-                        <div class="feature-icon">
-                            <i class="fas fa-truck"></i>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
                         </div>
-                        <h5 class="card-title">Fast Delivery</h5>
-                        <p class="card-text">With our efficient production and delivery system, your orders reach you quickly and safely.</p>
-                        <a href="#" class="btn btn-link text-primary mt-3">Learn More <i class="fas fa-arrow-right ms-1"></i></a>
+                        <p class="testimonial-text">
+                            "Working with Veerathamizh for our event banners was a pleasure. Their team was professional,
+                            responsive, and the final product made our event stand out. Will definitely use them again!"
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">
+                                <div class="avatar-placeholder">AM</div>
+                            </div>
+                            <div class="testimonial-info">
+                                <h5 class="author-name">Anita Mehta</h5>
+                                <p class="author-title">Event Manager, Celebration Inc.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="card feature-card h-100 text-center p-4">
-                    <div class="card-body">
-                        <div class="feature-icon">
-                            <i class="fas fa-headset"></i>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
                         </div>
-                        <h5 class="card-title">24/7 Support</h5>
-                        <p class="card-text">Our dedicated customer service team is always ready to assist you with any questions or concerns.</p>
-                        <a href="#" class="btn btn-link text-primary mt-3">Learn More <i class="fas fa-arrow-right ms-1"></i></a>
+                        <p class="testimonial-text">
+                            "The attention to detail and quality of materials used by Veerathamizh Digital Media Group is 
+                            unmatched. Our banners withstood outdoor conditions for months without fading."
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">
+                                <div class="avatar-placeholder">KP</div>
+                            </div>
+                            <div class="testimonial-info">
+                                <h5 class="author-name">Karthik Pillai</h5>
+                                <p class="author-title">CEO, RetailPlus</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>    <section class="cta-section text-center mb-5 py-5" data-aos="fade-up">
-        <div class="cta-content p-5 rounded">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <h2 class="cta-title mb-4">Ready to Order Your Banner?</h2>
-                    <p class="cta-text mb-4">Start your order now and get your high-quality banners delivered to your doorstep. We offer great prices with fast delivery.</p>
-                    <div class="cta-actions">
-                        <a href="/order" class="btn btn-primary btn-lg me-3"><i class="fas fa-shopping-cart me-2"></i>Shop Now</a>
-                        <a href="/contact" class="btn btn-outline-primary btn-lg"><i class="fas fa-phone-alt me-2"></i>Talk to an Expert</a>
-                    </div>
-                    <div class="cta-features mt-5 d-flex justify-content-center">
-                        <div class="cta-feature mx-3"><i class="fas fa-check-circle text-success me-2"></i>Premium Quality</div>
-                        <div class="cta-feature mx-3"><i class="fas fa-check-circle text-success me-2"></i>Fast Delivery</div>
-                        <div class="cta-feature mx-3"><i class="fas fa-check-circle text-success me-2"></i>24/7 Support</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
+    </div>
+</section>
 
 <%- include('../layouts/footer') %>
