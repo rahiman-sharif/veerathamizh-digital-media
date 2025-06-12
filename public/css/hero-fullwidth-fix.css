@@ -1,0 +1,29 @@
+/* Hero Full-Width Fix CSS */
+/* This CSS fixes the hero section to be truly full-width without white spaces */
+
+/* Make the hero container full-width */
+.hero-container {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(-50vw + 50%) !important;
+  margin-right: calc(-50vw + 50%) !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Ensure the container inside hero has proper padding for content */
+.hero-container .container {
+  max-width: 1320px; /* Bootstrap default for large screens */
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Fix for responsive behavior */
+@media (max-width: 576px) {
+  .hero-container .container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
